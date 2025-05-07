@@ -14,7 +14,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   useEffect(() => {
     setIsLoading(true);
     setErrorOccurred(false);
-  }, [flashcard.id]); // Reset loading state when flashcard changes
+  }, [flashcard.id, flashcard.imageUrl]); // Reset loading state when flashcard or its URL changes
 
   const handleImageLoad = () => {
     setIsLoading(false);
@@ -24,7 +24,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   const handleImageError = () => {
     setIsLoading(false);
     setErrorOccurred(true);
-    console.error(`Error loading image: ${flashcard.imageUrl}`);
+    // console.error(`Error loading image: ${flashcard.imageUrl}`); // Removed this line
   };
 
   return (
