@@ -9,14 +9,8 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
-      },
-    ],
+    // remotePatterns are no longer needed if all images are local
+    // If you still need to load images from external domains, you can add patterns here.
   },
 };
 
