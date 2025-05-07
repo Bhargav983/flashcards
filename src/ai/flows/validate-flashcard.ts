@@ -30,35 +30,18 @@ export async function validateFlashcardStyle(input: ValidateFlashcardStyleInput)
   return validateFlashcardStyleFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'validateFlashcardStylePrompt',
-  input: {schema: ValidateFlashcardStyleInputSchema},
-  output: {schema: ValidateFlashcardStyleOutputSchema},
-  prompt: `You are an expert in evaluating flashcard images for adherence to a specific style guide for baby flashcards.  The flashcards should follow the Glenn Doman method style.
-
-  Here are the guidelines:
-  - Minimalist
-  - High-contrast
-  - Educational
-  - A single realistic fruit
-  - Centered on a plain white background
-  - No text, no borders, no background clutter
-  - High clarity, high resolution, large size
-
-  Analyze the image and determine if it follows the style guide. Provide feedback if it does not.
-
-  Image: {{media url=imageDataUri}}
-  `,
-});
-
 const validateFlashcardStyleFlow = ai.defineFlow(
   {
     name: 'validateFlashcardStyleFlow',
     inputSchema: ValidateFlashcardStyleInputSchema,
     outputSchema: ValidateFlashcardStyleOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input) => {
+    // AI-based validation is disabled.
+    // console.log(`Image validation requested for image data URI (first 50 chars): ${input.imageDataUri.substring(0,50)}, but AI validation is disabled.`);
+    return {
+      isValid: true, // Default to true as AI validation is off
+      feedback: "AI-based style validation is currently disabled."
+    };
   }
 );

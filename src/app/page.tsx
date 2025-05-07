@@ -44,8 +44,8 @@ export default function Home() {
             });
           } else {
             toast({
-              title: "Generation Failed",
-              description: `Could not generate a suitable flashcard for ${fruitToGenerate}. Showing default cards.`,
+              title: "AI Generation Unavailable",
+              description: `Could not generate a flashcard for ${fruitToGenerate} using AI. Showing default cards. AI features might be disabled.`,
               variant: "destructive",
             });
             setFlashcards(initialFlashcards); // Fallback to default
@@ -54,7 +54,7 @@ export default function Home() {
           console.error("Error generating flashcard:", error);
           toast({
             title: "Error",
-            description: "An error occurred while generating the flashcard. Showing default cards.",
+            description: "An error occurred while attempting to generate the flashcard. Showing default cards.",
             variant: "destructive",
           });
           setFlashcards(initialFlashcards); // Fallback to default
@@ -65,7 +65,8 @@ export default function Home() {
       };
       generateSingleCard();
     } else {
-      setIsLoading(false); // No generation, load default
+      setFlashcards(initialFlashcards); // Load default if no fruit specified
+      setIsLoading(false); 
     }
   }, [searchParams, toast]);
 
@@ -127,7 +128,7 @@ export default function Home() {
         <Card className="w-full max-w-md shadow-xl">
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-foreground">
-              {isGenerating ? "Generating Flashcard..." : "Loading Flashcards..."}
+              {isGenerating ? "Attempting AI Flashcard Generation..." : "Loading Flashcards..."}
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center space-y-4 py-12">
