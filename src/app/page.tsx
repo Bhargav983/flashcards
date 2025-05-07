@@ -1,10 +1,12 @@
+
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { flashcards as initialFlashcards, type Flashcard } from '@/lib/flashcard-data';
+import { flashcards as allFlashcardsData, type Flashcard } from '@/lib/flashcard-data';
 import { FlashcardImage } from '@/components/flashcard-image';
 import { NavigationControls } from '@/components/navigation-controls';
+import { CategoryTabs } from '@/components/category-tabs';
 import { generateFlashcard } from '@/ai/flows/generate-flashcard';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,49 +17,75 @@ export default function Home() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
 
-  const [flashcards, setFlashcards] = useState<Flashcard[]>(initialFlashcards);
+  const [allFlashcards] = useState<Flashcard[]>(allFlashcardsData);
+  const [displayedFlashcards, setDisplayedFlashcards] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  const defaultCategory = 'fruit'; // Changed from 'fruits' to 'fruit' to match data
+  const [activeCategory, setActiveCategory] = useState<string>(defaultCategory);
+  const [showTabs, setShowTabs] = useState(true);
 
-  // Handle generating a single flashcard if 'fruit' query param is present
+
+  const uniqueCategories = useMemo(() => {
+    const categories = new Set(allFlashcards.map(fc => fc.category));
+    return Array.from(categories);
+  }, [allFlashcards]);
+
   useEffect(() => {
-    const fruitToGenerate = searchParams.get('fruit');
-    if (fruitToGenerate) {
+    const itemToGenerate = searchParams.get('fruit'); // Keep 'fruit' param for specific item generation
+    
+    if (itemToGenerate) {
+      setShowTabs(false);
+      setIsLoading(true); // Ensure loading state is true before generation
       const generateSingleCard = async () => {
         setIsGenerating(true);
         try {
-          const result = await generateFlashcard({ fruit: fruitToGenerate });
+          // Attempt to find if it's a known item first to get its category
+          const knownItem = allFlashcards.find(fc => fc.fruitName.toLowerCase() === itemToGenerate.toLowerCase());
+          
+          const result = await generateFlashcard({ fruit: itemToGenerate });
           if (result.imageUrl && result.isAdherent) {
             const newFlashcard: Flashcard = {
-              id: fruitToGenerate.toLowerCase().replace(/\s+/g, '-'),
-              fruitName: fruitToGenerate,
-              altText: `A realistic ${fruitToGenerate} centered on a plain white background.`,
+              id: itemToGenerate.toLowerCase().replace(/\s+/g, '-'),
+              fruitName: itemToGenerate,
+              altText: `A realistic ${itemToGenerate} centered on a plain white background.`,
               imageUrl: result.imageUrl,
-              aiHint: fruitToGenerate.toLowerCase(),
+              aiHint: itemToGenerate.toLowerCase(),
+              category: knownItem?.category || 'fruit', // Use known category or default
             };
-            setFlashcards([newFlashcard]);
+            setDisplayedFlashcards([newFlashcard]);
             setCurrentIndex(0);
             toast({
               title: "Flashcard Generated!",
-              description: `Showing flashcard for ${fruitToGenerate}.`,
+              description: `Showing flashcard for ${itemToGenerate}.`,
             });
           } else {
             toast({
               title: "AI Generation Unavailable",
-              description: `Could not generate a flashcard for ${fruitToGenerate} using AI. Showing default cards. AI features might be disabled.`,
+              description: `Could not generate a flashcard for ${itemToGenerate} using AI. AI features might be disabled.`,
               variant: "destructive",
             });
-            setFlashcards(initialFlashcards); // Fallback to default
+            // Fallback to showing all cards of the default category if generation fails
+            setShowTabs(true);
+            const cardsForCategory = allFlashcards.filter(fc => fc.category === defaultCategory);
+            setDisplayedFlashcards(cardsForCategory);
+            setActiveCategory(defaultCategory);
+            setCurrentIndex(0);
           }
         } catch (error) {
           console.error("Error generating flashcard:", error);
           toast({
             title: "Error",
-            description: "An error occurred while attempting to generate the flashcard. Showing default cards.",
+            description: "An error occurred while attempting to generate the flashcard.",
             variant: "destructive",
           });
-          setFlashcards(initialFlashcards); // Fallback to default
+          setShowTabs(true);
+          const cardsForCategory = allFlashcards.filter(fc => fc.category === defaultCategory);
+          setDisplayedFlashcards(cardsForCategory);
+          setActiveCategory(defaultCategory);
+          setCurrentIndex(0);
         } finally {
           setIsGenerating(false);
           setIsLoading(false);
@@ -65,21 +93,34 @@ export default function Home() {
       };
       generateSingleCard();
     } else {
-      setFlashcards(initialFlashcards); // Load default if no fruit specified
-      setIsLoading(false); 
+      // Category view
+      setShowTabs(true);
+      setIsLoading(true);
+      const cardsForCategory = allFlashcards.filter(fc => fc.category === activeCategory);
+      setDisplayedFlashcards(cardsForCategory.length > 0 ? cardsForCategory : allFlashcards.filter(fc => fc.category === defaultCategory));
+      if (cardsForCategory.length === 0 && activeCategory !== defaultCategory) {
+        setActiveCategory(defaultCategory); // Fallback to default if current category has no cards
+      }
+      setCurrentIndex(0);
+      setIsLoading(false);
     }
-  }, [searchParams, toast]);
+  }, [searchParams, toast, allFlashcards, activeCategory]);
 
+
+  const handleCategoryChange = useCallback((category: string) => {
+    setActiveCategory(category);
+    // The useEffect will update displayedFlashcards and reset currentIndex
+    router.push('/', { scroll: false }); // Remove query params when changing category
+  }, [router]);
 
   const goToPrevious = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : flashcards.length - 1));
-  }, [flashcards.length]);
+    setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : displayedFlashcards.length - 1));
+  }, [displayedFlashcards.length]);
 
   const goToNext = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex < flashcards.length - 1 ? prevIndex + 1 : 0));
-  }, [flashcards.length]);
+    setCurrentIndex((prevIndex) => (prevIndex < displayedFlashcards.length - 1 ? prevIndex + 1 : 0));
+  }, [displayedFlashcards.length]);
 
-  // Swipe gesture handling
   useEffect(() => {
     let touchStartX = 0;
     let touchEndX = 0;
@@ -94,21 +135,13 @@ export default function Home() {
     };
 
     const handleSwipe = () => {
-      if (touchEndX < touchStartX - 50) { // Swipe left
-        goToNext();
-      }
-      if (touchEndX > touchStartX + 50) { // Swipe right
-        goToPrevious();
-      }
+      if (touchEndX < touchStartX - 50) goToNext();
+      if (touchEndX > touchStartX + 50) goToPrevious();
     };
     
-    // Keyboard navigation
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') {
-        goToNext();
-      } else if (e.key === 'ArrowLeft') {
-        goToPrevious();
-      }
+      if (e.key === 'ArrowRight') goToNext();
+      if (e.key === 'ArrowLeft') goToPrevious();
     };
 
     window.addEventListener('touchstart', handleTouchStart);
@@ -140,35 +173,53 @@ export default function Home() {
     );
   }
   
-  if (flashcards.length === 0) {
+  if (displayedFlashcards.length === 0 && !isLoading) {
      return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
-        <Card className="w-full max-w-md shadow-xl">
+        {showTabs && uniqueCategories.length > 0 && (
+          <CategoryTabs
+            categories={uniqueCategories}
+            activeCategory={activeCategory}
+            onCategoryChange={handleCategoryChange}
+          />
+        )}
+        <Card className="w-full max-w-md shadow-xl mt-4">
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-foreground">
               No Flashcards Available
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center space-y-4 py-12">
-            <p className="text-muted-foreground">Could not load or generate flashcards.</p>
+            <p className="text-muted-foreground">
+              Could not load or generate flashcards for this {showTabs ? `category: ${activeCategory}` : 'item'}.
+            </p>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-background overflow-hidden">
-      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative">
-        <FlashcardImage flashcard={flashcards[currentIndex]} />
+    <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden">
+      {showTabs && uniqueCategories.length > 0 && (
+        <CategoryTabs
+          categories={uniqueCategories}
+          activeCategory={activeCategory}
+          onCategoryChange={handleCategoryChange}
+        />
+      )}
+      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4">
+        {displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
+          <FlashcardImage flashcard={displayedFlashcards[currentIndex]} />
+        )}
       </div>
-      {flashcards.length > 1 && (
+      {displayedFlashcards.length > 1 && (
         <NavigationControls
           onPrevious={goToPrevious}
           onNext={goToNext}
-          canGoPrevious={currentIndex > 0 || flashcards.length > 1}
-          canGoNext={currentIndex < flashcards.length - 1 || flashcards.length > 1}
+          // Loop behavior is handled by goToPrevious/goToNext logic
+          canGoPrevious={true} 
+          canGoNext={true}
         />
       )}
     </main>
