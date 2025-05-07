@@ -1,163 +1,148 @@
 
 export interface Flashcard {
   id: string;
-  fruitName: string; // Retaining name for consistency with potential AI generation, though items aren't just fruits.
+  // fruitName: string; // Removed as per user request
   altText: string;
   imageUrl: string;
   aiHint: string;
-  category: string; // Changed from 'fruit' | 'vegetable' to support diverse categories
+  category: string;
 }
 
+// Assumes images are named 0.jpg, 1.jpg, etc. in corresponding lowercase category folders under /public/
+// e.g., /public/fruit/0.jpg, /public/fruit/1.jpg
+
 export const flashcards: Flashcard[] = [
-  // Fruits
+  // Fruit category
   {
-    id: 'apple',
-    fruitName: 'Red Apple',
-    altText: 'A realistic red apple centered on a plain white background.',
-    imageUrl: '/fruits/apple.jpg',
-    aiHint: 'red apple',
+    id: 'fruit-0',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/0.jpg', // Was /fruits/apple.jpg
+    aiHint: 'fruit',
     category: 'fruit',
   },
   {
-    id: 'banana',
-    fruitName: 'Yellow Banana',
-    altText: 'A realistic yellow banana centered on a plain white background.',
-    imageUrl: '/fruits/banana.jpg',
-    aiHint: 'yellow banana',
+    id: 'fruit-1',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/1.jpg', // Was /fruits/banana.jpg
+    aiHint: 'fruit',
     category: 'fruit',
   },
   {
-    id: 'grapes',
-    fruitName: 'Green Grapes',
-    altText: 'A realistic bunch of green grapes centered on a plain white background.',
-    imageUrl: '/fruits/grapes.jpg',
-    aiHint: 'green grapes',
+    id: 'fruit-2',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/2.jpg', // Was /fruits/grapes.jpg
+    aiHint: 'fruit',
     category: 'fruit',
   },
   {
-    id: 'mango',
-    fruitName: 'Ripe Mango',
-    altText: 'A realistic ripe mango centered on a plain white background.',
-    imageUrl: '/fruits/mango.jpg',
-    aiHint: 'ripe mango',
+    id: 'fruit-3',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/3.jpg', // Was /fruits/mango.jpg
+    aiHint: 'fruit',
     category: 'fruit',
   },
   {
-    id: 'strawberry',
-    fruitName: 'Bright Red Strawberry',
-    altText: 'A realistic bright red strawberry centered on a plain white background.',
-    imageUrl: '/fruits/strawberry.jpg',
-    aiHint: 'red strawberry',
+    id: 'fruit-4',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/4.jpg', // Was /fruits/strawberry.jpg
+    aiHint: 'fruit',
     category: 'fruit',
   },
-  // Vegetables
+  // Vegetable category
   {
-    id: 'carrot',
-    fruitName: 'Orange Carrot',
-    altText: 'A realistic orange carrot centered on a plain white background.',
-    imageUrl: '/vegetables/carrot.jpg',
-    aiHint: 'orange carrot',
+    id: 'vegetable-0',
+    altText: 'A flashcard image from the vegetable category.',
+    imageUrl: '/vegetable/0.jpg', // Was /vegetables/carrot.jpg
+    aiHint: 'vegetable',
     category: 'vegetable',
   },
   {
-    id: 'broccoli',
-    fruitName: 'Green Broccoli',
-    altText: 'A realistic head of green broccoli centered on a plain white background.',
-    imageUrl: '/vegetables/broccoli.jpg',
-    aiHint: 'green broccoli',
+    id: 'vegetable-1',
+    altText: 'A flashcard image from the vegetable category.',
+    imageUrl: '/vegetable/1.jpg', // Was /vegetables/broccoli.jpg
+    aiHint: 'vegetable',
     category: 'vegetable',
   },
   {
-    id: 'tomato', // Botanically a fruit, commonly used as a vegetable
-    fruitName: 'Red Tomato',
-    altText: 'A realistic red tomato centered on a plain white background.',
-    imageUrl: '/vegetables/tomato.jpg',
-    aiHint: 'red tomato',
+    id: 'vegetable-2',
+    altText: 'A flashcard image from the vegetable category.',
+    imageUrl: '/vegetable/2.jpg', // Was /vegetables/tomato.jpg
+    aiHint: 'vegetable',
     category: 'vegetable',
   },
-  // Astrology
+  // Astrology category
   {
-    id: 'astrology-aries',
-    fruitName: 'Aries Sign',
-    altText: 'The Aries zodiac sign symbol on a cosmic background.',
-    imageUrl: '/astrology/aries.jpg',
-    aiHint: 'aries zodiac',
-    category: 'Astrology',
+    id: 'astrology-0',
+    altText: 'A flashcard image from the astrology category.',
+    imageUrl: '/astrology/0.jpg', // Was /astrology/aries.jpg
+    aiHint: 'astrology',
+    category: 'astrology',
   },
   {
-    id: 'astrology-galaxy',
-    fruitName: 'Galaxy View',
-    altText: 'A stunning view of a distant galaxy.',
-    imageUrl: '/astrology/galaxy.jpg',
-    aiHint: 'galaxy stars',
-    category: 'Astrology',
+    id: 'astrology-1',
+    altText: 'A flashcard image from the astrology category.',
+    imageUrl: '/astrology/1.jpg', // Was /astrology/galaxy.jpg
+    aiHint: 'astrology',
+    category: 'astrology',
   },
-  // AI/ML
+  // AI/ML category
   {
-    id: 'aiml-network',
-    fruitName: 'Neural Network',
-    altText: 'A visualization of a neural network.',
-    imageUrl: '/ai-ml/network.jpg',
-    aiHint: 'neural network',
-    category: 'AI/ML',
+    id: 'ai-ml-0',
+    altText: 'A flashcard image from the ai-ml category.',
+    imageUrl: '/ai-ml/0.jpg', // Was /ai-ml/network.jpg
+    aiHint: 'ai-ml',
+    category: 'ai-ml',
   },
   {
-    id: 'aiml-robot',
-    fruitName: 'AI Robot',
-    altText: 'A friendly AI robot assistant.',
-    imageUrl: '/ai-ml/robot.jpg',
-    aiHint: 'ai robot',
-    category: 'AI/ML',
+    id: 'ai-ml-1',
+    altText: 'A flashcard image from the ai-ml category.',
+    imageUrl: '/ai-ml/1.jpg', // Was /ai-ml/robot.jpg
+    aiHint: 'ai-ml',
+    category: 'ai-ml',
   },
-  // Chess
+  // Chess category
   {
-    id: 'chess-knight',
-    fruitName: 'Chess Knight',
-    altText: 'A black chess knight piece.',
-    imageUrl: '/chess/knight.jpg',
-    aiHint: 'chess knight',
-    category: 'Chess',
+    id: 'chess-0',
+    altText: 'A flashcard image from the chess category.',
+    imageUrl: '/chess/0.jpg', // Was /chess/knight.jpg
+    aiHint: 'chess',
+    category: 'chess',
   },
   {
-    id: 'chess-board',
-    fruitName: 'Chess Board',
-    altText: 'A chess board ready for a game.',
-    imageUrl: '/chess/board.jpg',
-    aiHint: 'chess board',
-    category: 'Chess',
+    id: 'chess-1',
+    altText: 'A flashcard image from the chess category.',
+    imageUrl: '/chess/1.jpg', // Was /chess/board.jpg
+    aiHint: 'chess',
+    category: 'chess',
   },
-  // Transport
+  // Transport category
   {
-    id: 'transport-car',
-    fruitName: 'Red Sports Car',
-    altText: 'A sleek red sports car.',
-    imageUrl: '/transport/car.jpg',
-    aiHint: 'sports car',
-    category: 'Transport',
+    id: 'transport-0',
+    altText: 'A flashcard image from the transport category.',
+    imageUrl: '/transport/0.jpg', // Was /transport/car.jpg
+    aiHint: 'transport',
+    category: 'transport',
   },
   {
-    id: 'transport-plane',
-    fruitName: 'Airplane Flying',
-    altText: 'An airplane flying in the sky.',
-    imageUrl: '/transport/plane.jpg',
-    aiHint: 'airplane sky',
-    category: 'Transport',
+    id: 'transport-1',
+    altText: 'A flashcard image from the transport category.',
+    imageUrl: '/transport/1.jpg', // Was /transport/plane.jpg
+    aiHint: 'transport',
+    category: 'transport',
   },
-  // Space
+  // Space category
   {
-    id: 'space-earth',
-    fruitName: 'Planet Earth',
-    altText: 'View of Planet Earth from space.',
-    imageUrl: '/space/earth.jpg', // Updated to local path
-    aiHint: 'planet earth',
-    category: 'Space',
+    id: 'space-0',
+    altText: 'A flashcard image from the space category.',
+    imageUrl: '/space/0.jpg', // Was /space/earth.jpg
+    aiHint: 'space',
+    category: 'space',
   },
   {
-    id: 'space-astronaut',
-    fruitName: 'Astronaut',
-    altText: 'An astronaut floating in space.',
-    imageUrl: '/space/astronaut.jpg', // Updated to local path
-    aiHint: 'astronaut space',
-    category: 'Space',
+    id: 'space-1',
+    altText: 'A flashcard image from the space category.',
+    imageUrl: '/space/1.jpg', // Was /space/astronaut.jpg
+    aiHint: 'space',
+    category: 'space',
   },
 ];

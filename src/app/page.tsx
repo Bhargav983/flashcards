@@ -2,115 +2,73 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation'; // Removed useSearchParams as it's no longer needed for fruit param
 import { flashcards as allFlashcardsData, type Flashcard } from '@/lib/flashcard-data';
 import { FlashcardImage } from '@/components/flashcard-image';
 import { NavigationControls } from '@/components/navigation-controls';
 import { CategoryTabs } from '@/components/category-tabs';
-import { generateFlashcard } from '@/ai/flows/generate-flashcard';
-import { useToast } from '@/hooks/use-toast';
+// import { generateFlashcard } from '@/ai/flows/generate-flashcard'; // No longer used here
+// import { useToast } from '@/hooks/use-toast'; // No longer used here for AI generation toasts
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const { toast } = useToast();
+  // const searchParams = useSearchParams(); // No longer needed
+  // const { toast } = useToast(); // No longer needed for AI generation toasts
 
   const [allFlashcards] = useState<Flashcard[]>(allFlashcardsData);
   const [displayedFlashcards, setDisplayedFlashcards] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isGenerating, setIsGenerating] = useState(false);
+  // const [isGenerating, setIsGenerating] = useState(false); // No longer needed
   
-  const defaultCategory = 'fruit'; // Changed from 'fruits' to 'fruit' to match data
+  const defaultCategory = 'fruit';
   const [activeCategory, setActiveCategory] = useState<string>(defaultCategory);
-  const [showTabs, setShowTabs] = useState(true);
-
+  // const [showTabs, setShowTabs] = useState(true); // showTabs is effectively always true now
 
   const uniqueCategories = useMemo(() => {
-    const categories = new Set(allFlashcards.map(fc => fc.category));
-    return Array.from(categories);
+    // Convert all categories to lowercase for Set to ensure uniqueness if data has mixed casing
+    // and then capitalize for display if needed, though current data is already lowercase.
+    const categories = new Set(allFlashcards.map(fc => fc.category.toLowerCase()));
+    return Array.from(categories).map(cat => {
+      // Example of capitalizing, adjust if your category names need specific casing
+      if (cat === 'ai-ml') return 'AI/ML';
+      return cat.charAt(0).toUpperCase() + cat.slice(1);
+    });
   }, [allFlashcards]);
 
   useEffect(() => {
-    const itemToGenerate = searchParams.get('fruit'); // Keep 'fruit' param for specific item generation
+    // Simplified: always load by category
+    setIsLoading(true);
+    // Normalize activeCategory to lowercase for filtering, as data categories are lowercase
+    const currentCategoryNormalized = activeCategory.toLowerCase().replace(/\s+/g, '-');
     
-    if (itemToGenerate) {
-      setShowTabs(false);
-      setIsLoading(true); // Ensure loading state is true before generation
-      const generateSingleCard = async () => {
-        setIsGenerating(true);
-        try {
-          // Attempt to find if it's a known item first to get its category
-          const knownItem = allFlashcards.find(fc => fc.fruitName.toLowerCase() === itemToGenerate.toLowerCase());
-          
-          const result = await generateFlashcard({ fruit: itemToGenerate });
-          if (result.imageUrl && result.isAdherent) {
-            const newFlashcard: Flashcard = {
-              id: itemToGenerate.toLowerCase().replace(/\s+/g, '-'),
-              fruitName: itemToGenerate,
-              altText: `A realistic ${itemToGenerate} centered on a plain white background.`,
-              imageUrl: result.imageUrl,
-              aiHint: itemToGenerate.toLowerCase(),
-              category: knownItem?.category || 'fruit', // Use known category or default
-            };
-            setDisplayedFlashcards([newFlashcard]);
-            setCurrentIndex(0);
-            toast({
-              title: "Flashcard Generated!",
-              description: `Showing flashcard for ${itemToGenerate}.`,
-            });
-          } else {
-            toast({
-              title: "AI Generation Unavailable",
-              description: `Could not generate a flashcard for ${itemToGenerate} using AI. AI features might be disabled.`,
-              variant: "destructive",
-            });
-            // Fallback to showing all cards of the default category if generation fails
-            setShowTabs(true);
-            const cardsForCategory = allFlashcards.filter(fc => fc.category === defaultCategory);
-            setDisplayedFlashcards(cardsForCategory);
-            setActiveCategory(defaultCategory);
-            setCurrentIndex(0);
-          }
-        } catch (error) {
-          console.error("Error generating flashcard:", error);
-          toast({
-            title: "Error",
-            description: "An error occurred while attempting to generate the flashcard.",
-            variant: "destructive",
-          });
-          setShowTabs(true);
-          const cardsForCategory = allFlashcards.filter(fc => fc.category === defaultCategory);
-          setDisplayedFlashcards(cardsForCategory);
-          setActiveCategory(defaultCategory);
-          setCurrentIndex(0);
-        } finally {
-          setIsGenerating(false);
-          setIsLoading(false);
-        }
-      };
-      generateSingleCard();
+    const cardsForCategory = allFlashcards.filter(fc => fc.category === currentCategoryNormalized);
+    
+    if (cardsForCategory.length > 0) {
+      setDisplayedFlashcards(cardsForCategory);
     } else {
-      // Category view
-      setShowTabs(true);
-      setIsLoading(true);
-      const cardsForCategory = allFlashcards.filter(fc => fc.category === activeCategory);
-      setDisplayedFlashcards(cardsForCategory.length > 0 ? cardsForCategory : allFlashcards.filter(fc => fc.category === defaultCategory));
-      if (cardsForCategory.length === 0 && activeCategory !== defaultCategory) {
-        setActiveCategory(defaultCategory); // Fallback to default if current category has no cards
+      // Fallback to default category if current category has no cards or is invalid
+      const defaultCards = allFlashcards.filter(fc => fc.category === defaultCategory);
+      setDisplayedFlashcards(defaultCards);
+      if (activeCategory !== defaultCategory) {
+         // find the display name for defaultCategory
+        const defaultCategoryDisplayName = uniqueCategories.find(c => c.toLowerCase().replace(/\s+/g, '-') === defaultCategory) || defaultCategory;
+        setActiveCategory(defaultCategoryDisplayName);
       }
-      setCurrentIndex(0);
-      setIsLoading(false);
     }
-  }, [searchParams, toast, allFlashcards, activeCategory]);
+    setCurrentIndex(0);
+    setIsLoading(false);
+  }, [activeCategory, allFlashcards, defaultCategory, uniqueCategories]);
 
 
   const handleCategoryChange = useCallback((category: string) => {
+    // The category from tabs might be capitalized (e.g. "Fruit", "AI/ML")
+    // We set activeCategory to this display name.
+    // The useEffect will handle normalization for filtering.
     setActiveCategory(category);
-    // The useEffect will update displayedFlashcards and reset currentIndex
-    router.push('/', { scroll: false }); // Remove query params when changing category
+    router.push('/', { scroll: false }); 
   }, [router]);
 
   const goToPrevious = useCallback(() => {
@@ -155,13 +113,13 @@ export default function Home() {
     };
   }, [goToNext, goToPrevious]);
 
-  if (isLoading || isGenerating) {
+  if (isLoading) { // Removed isGenerating condition
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
         <Card className="w-full max-w-md shadow-xl">
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-foreground">
-              {isGenerating ? "Attempting AI Flashcard Generation..." : "Loading Flashcards..."}
+              Loading Flashcards...
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center space-y-4 py-12">
@@ -176,7 +134,7 @@ export default function Home() {
   if (displayedFlashcards.length === 0 && !isLoading) {
      return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
-        {showTabs && uniqueCategories.length > 0 && (
+        {uniqueCategories.length > 0 && (
           <CategoryTabs
             categories={uniqueCategories}
             activeCategory={activeCategory}
@@ -191,7 +149,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center space-y-4 py-12">
             <p className="text-muted-foreground">
-              Could not load or generate flashcards for this {showTabs ? `category: ${activeCategory}` : 'item'}.
+              Could not load flashcards for this category: {activeCategory}. Ensure images are present in the /public/{activeCategory.toLowerCase().replace(/\s+/g, '-')} folder and named 0.jpg, 1.jpg, etc.
             </p>
           </CardContent>
         </Card>
@@ -201,7 +159,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden">
-      {showTabs && uniqueCategories.length > 0 && (
+      {uniqueCategories.length > 0 && (
         <CategoryTabs
           categories={uniqueCategories}
           activeCategory={activeCategory}
@@ -217,7 +175,6 @@ export default function Home() {
         <NavigationControls
           onPrevious={goToPrevious}
           onNext={goToNext}
-          // Loop behavior is handled by goToPrevious/goToNext logic
           canGoPrevious={true} 
           canGoNext={true}
         />
