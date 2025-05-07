@@ -16,14 +16,14 @@ export const CategoryTabs: FC<CategoryTabsProps> = ({
   onCategoryChange,
 }) => {
   return (
-    <div className="w-full flex justify-center py-4">
+    <div className="w-full flex justify-center py-2 md:py-4"> {/* Adjusted padding */}
       <Tabs value={activeCategory} onValueChange={onCategoryChange} className="w-auto">
-        <TabsList>
+        <TabsList className="overflow-x-auto max-w-full"> {/* Added overflow for smaller screens */}
           {categories.map((category) => (
             <TabsTrigger
               key={category}
               value={category}
-              className="capitalize px-4 py-2 text-sm font-medium"
+              className="capitalize px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium whitespace-nowrap" /* Adjusted padding and text size */
             >
               {category}
             </TabsTrigger>

@@ -7,41 +7,32 @@ import { flashcards as allFlashcardsData, type Flashcard } from '@/lib/flashcard
 import { FlashcardImage } from '@/components/flashcard-image';
 import { NavigationControls } from '@/components/navigation-controls';
 import { CategoryTabs } from '@/components/category-tabs';
-// import { generateFlashcard } from '@/ai/flows/generate-flashcard'; // No longer used here
-// import { useToast } from '@/hooks/use-toast'; // No longer used here for AI generation toasts
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, PanelTopClose, PanelTopOpen } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
-  // const searchParams = useSearchParams(); // No longer needed
-  // const { toast } = useToast(); // No longer needed for AI generation toasts
 
   const [allFlashcards] = useState<Flashcard[]>(allFlashcardsData);
   const [displayedFlashcards, setDisplayedFlashcards] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  // const [isGenerating, setIsGenerating] = useState(false); // No longer needed
   
   const defaultCategory = 'fruit';
   const [activeCategory, setActiveCategory] = useState<string>(defaultCategory);
-  // const [showTabs, setShowTabs] = useState(true); // showTabs is effectively always true now
+  const [showTabs, setShowTabs] = useState(true);
 
   const uniqueCategories = useMemo(() => {
-    // Convert all categories to lowercase for Set to ensure uniqueness if data has mixed casing
-    // and then capitalize for display if needed, though current data is already lowercase.
     const categories = new Set(allFlashcards.map(fc => fc.category.toLowerCase()));
     return Array.from(categories).map(cat => {
-      // Example of capitalizing, adjust if your category names need specific casing
       if (cat === 'ai-ml') return 'AI/ML';
       return cat.charAt(0).toUpperCase() + cat.slice(1);
     });
   }, [allFlashcards]);
 
   useEffect(() => {
-    // Simplified: always load by category
     setIsLoading(true);
-    // Normalize activeCategory to lowercase for filtering, as data categories are lowercase
     const currentCategoryNormalized = activeCategory.toLowerCase().replace(/\s+/g, '-');
     
     const cardsForCategory = allFlashcards.filter(fc => fc.category === currentCategoryNormalized);
@@ -49,11 +40,9 @@ export default function Home() {
     if (cardsForCategory.length > 0) {
       setDisplayedFlashcards(cardsForCategory);
     } else {
-      // Fallback to default category if current category has no cards or is invalid
       const defaultCards = allFlashcards.filter(fc => fc.category === defaultCategory);
       setDisplayedFlashcards(defaultCards);
       if (activeCategory !== defaultCategory) {
-         // find the display name for defaultCategory
         const defaultCategoryDisplayName = uniqueCategories.find(c => c.toLowerCase().replace(/\s+/g, '-') === defaultCategory) || defaultCategory;
         setActiveCategory(defaultCategoryDisplayName);
       }
@@ -64,9 +53,6 @@ export default function Home() {
 
 
   const handleCategoryChange = useCallback((category: string) => {
-    // The category from tabs might be capitalized (e.g. "Fruit", "AI/ML")
-    // We set activeCategory to this display name.
-    // The useEffect will handle normalization for filtering.
     setActiveCategory(category);
     router.push('/', { scroll: false }); 
   }, [router]);
@@ -113,7 +99,11 @@ export default function Home() {
     };
   }, [goToNext, goToPrevious]);
 
-  if (isLoading) { // Removed isGenerating condition
+  const toggleTabsVisibility = useCallback(() => {
+    setShowTabs(prevShowTabs => !prevShowTabs);
+  }, []);
+
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
         <Card className="w-full max-w-md shadow-xl">
@@ -134,7 +124,12 @@ export default function Home() {
   if (displayedFlashcards.length === 0 && !isLoading) {
      return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
-        {uniqueCategories.length > 0 && (
+        <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-20">
+          <Button onClick={toggleTabsVisibility} variant="outline" size="icon" aria-label={showTabs ? "Hide Categories" : "Show Categories"}>
+            {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
+          </Button>
+        </div>
+        {showTabs && uniqueCategories.length > 0 && (
           <CategoryTabs
             categories={uniqueCategories}
             activeCategory={activeCategory}
@@ -158,8 +153,13 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden">
-      {uniqueCategories.length > 0 && (
+    <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden pt-16 relative">
+      <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-20 bg-background/80 backdrop-blur-sm">
+          <Button onClick={toggleTabsVisibility} variant="outline" size="icon" aria-label={showTabs ? "Hide Categories" : "Show Categories"} className="shadow-md">
+            {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
+          </Button>
+        </div>
+      {showTabs && uniqueCategories.length > 0 && (
         <CategoryTabs
           categories={uniqueCategories}
           activeCategory={activeCategory}
@@ -182,3 +182,4 @@ export default function Home() {
     </main>
   );
 }
+
