@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -216,10 +217,12 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center space-y-4 py-12">
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-center">
               No flashcards found for {activeCategory}
               {activeSet ? ` - Set ${activeSet.replace('set', '')}` : ''}.
-              Ensure images are present in the correct folder structure, e.g., /public/{activeCategory.toLowerCase().replace(/\s+/g, '-')}/{activeSet || 'setX'}/image.jpg.
+              <br />
+              Ensure images are present in{' '}
+              <code>public/{activeCategory.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-')}/{activeSet || 'setX'}/image.jpg</code>.
             </p>
           </CardContent>
         </Card>
@@ -251,7 +254,7 @@ export default function Home() {
         )}
       </div>
       
-      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mt-8 md:mt-12"> {/* Added margin-top to account for fixed tabs */}
+      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mt-8 md:mt-12 mb-[80px] sm:mb-[100px]"> {/* Added margin-top and margin-bottom */}
         {displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
           <FlashcardImage flashcard={displayedFlashcards[currentIndex]} />
         )}
