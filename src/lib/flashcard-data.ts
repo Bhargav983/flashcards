@@ -16,7 +16,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'fruit-set1-apple',
     altText: 'A flashcard image of a red apple.',
-    imageUrl: '/fruit/set1/0.png', // Assuming 0.png is the apple as per user description
+    imageUrl: '/fruit/set1/0.png', // Corrected path
     aiHint: 'apple',
     category: 'fruit',
     set: 'set1',
@@ -62,7 +62,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'fruit-set2-pear',
     altText: 'A flashcard image of a pear.',
-    imageUrl: '/fruit/set2/6.jpg', // Placeholder name, actual image files should be named descriptively e.g. pear.jpg
+    imageUrl: '/fruit/set2/6.jpg', 
     aiHint: 'pear',
     category: 'fruit',
     set: 'set2',
@@ -71,7 +71,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'fruit-set2-mango',
     altText: 'A flashcard image of a mango.',
-    imageUrl: '/fruit/set2/7.jpg', // Placeholder name
+    imageUrl: '/fruit/set2/7.jpg', 
     aiHint: 'mango',
     category: 'fruit',
     set: 'set2',
@@ -80,7 +80,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'fruit-set2-pineapple',
     altText: 'A flashcard image of a pineapple.',
-    imageUrl: '/fruit/set2/8.jpg', // Placeholder name
+    imageUrl: '/fruit/set2/8.jpg', 
     aiHint: 'pineapple',
     category: 'fruit',
     set: 'set2',
@@ -89,7 +89,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'fruit-set2-kiwi',
     altText: 'A flashcard image of a kiwi.',
-    imageUrl: '/fruit/set2/9.jpg', // Placeholder name
+    imageUrl: '/fruit/set2/9.jpg', 
     aiHint: 'kiwi',
     category: 'fruit',
     set: 'set2',
@@ -98,7 +98,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'fruit-set2-watermelon',
     altText: 'A flashcard image of a watermelon.',
-    imageUrl: '/fruit/set2/10.jpg', // Placeholder name
+    imageUrl: '/fruit/set2/10.jpg', 
     aiHint: 'watermelon',
     category: 'fruit',
     set: 'set2',
@@ -108,7 +108,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'fruit-set3-cherries',
     altText: 'A flashcard image of cherries.',
-    imageUrl: '/fruit/set3/0.jpg', // Placeholder name
+    imageUrl: '/fruit/set3/0.jpg', 
     aiHint: 'cherries',
     category: 'fruit',
     set: 'set3',
@@ -166,7 +166,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'astrology-set1-aries',
     altText: 'A flashcard image of the Aries zodiac symbol.',
-    imageUrl: '/astrology/set1/0.jpg', // Placeholder
+    imageUrl: '/astrology/set1/0.jpg', 
     aiHint: 'Aries symbol',
     category: 'astrology',
     set: 'set1',
@@ -175,17 +175,16 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'astrology-set1-taurus',
     altText: 'A flashcard image of the Taurus zodiac symbol.',
-    imageUrl: '/astrology/set1/1.jpg', // Placeholder
+    imageUrl: '/astrology/set1/1.jpg', 
     aiHint: 'Taurus symbol',
     category: 'astrology',
     set: 'set1',
     displayText: 'Taurus',
   },
-  // ... add more astrology signs for set 1 to reach 5 items
   {
     baseId: 'astrology-set1-gemini',
     altText: 'A flashcard image of the Gemini zodiac symbol.',
-    imageUrl: '/astrology/set1/2.jpg', // Placeholder
+    imageUrl: '/astrology/set1/2.jpg', 
     aiHint: 'Gemini symbol',
     category: 'astrology',
     set: 'set1',
@@ -194,7 +193,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'astrology-set1-cancer',
     altText: 'A flashcard image of the Cancer zodiac symbol.',
-    imageUrl: '/astrology/set1/3.jpg', // Placeholder
+    imageUrl: '/astrology/set1/3.jpg', 
     aiHint: 'Cancer symbol',
     category: 'astrology',
     set: 'set1',
@@ -203,7 +202,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'astrology-set1-leo',
     altText: 'A flashcard image of the Leo zodiac symbol.',
-    imageUrl: '/astrology/set1/4.jpg', // Placeholder
+    imageUrl: '/astrology/set1/4.jpg', 
     aiHint: 'Leo symbol',
     category: 'astrology',
     set: 'set1',
@@ -215,7 +214,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'ai-ml-set1-robot',
     altText: 'A flashcard image of a friendly robot.',
-    imageUrl: '/ai-ml/set1/0.jpg', // Placeholder
+    imageUrl: '/ai-ml/set1/0.jpg', 
     aiHint: 'robot',
     category: 'ai-ml',
     set: 'set1',
@@ -224,7 +223,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'ai-ml-set1-algorithm',
     altText: 'A flashcard image representing a simple algorithm flowchart.',
-    imageUrl: '/ai-ml/set1/1.jpg', // Placeholder
+    imageUrl: '/ai-ml/set1/1.jpg', 
     aiHint: 'algorithm flowchart',
     category: 'ai-ml',
     set: 'set1',
@@ -233,7 +232,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'ai-ml-set1-neuralnetwork',
     altText: 'A flashcard image of a neural network diagram.',
-    imageUrl: '/ai-ml/set1/2.jpg', // Placeholder
+    imageUrl: '/ai-ml/set1/2.jpg', 
     aiHint: 'neural network',
     category: 'ai-ml',
     set: 'set1',
@@ -242,7 +241,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'ai-ml-set1-datacenter',
     altText: 'A flashcard image of a server rack in a data center.',
-    imageUrl: '/ai-ml/set1/3.jpg', // Placeholder
+    imageUrl: '/ai-ml/set1/3.jpg', 
     aiHint: 'data center server',
     category: 'ai-ml',
     set: 'set1',
@@ -251,7 +250,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'ai-ml-set1-chip',
     altText: 'A flashcard image of a computer chip.',
-    imageUrl: '/ai-ml/set1/4.jpg', // Placeholder
+    imageUrl: '/ai-ml/set1/4.jpg', 
     aiHint: 'computer chip',
     category: 'ai-ml',
     set: 'set1',
@@ -262,7 +261,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'chess-set1-king',
     altText: 'A flashcard image of a chess king piece.',
-    imageUrl: '/chess/set1/0.jpg', // Placeholder
+    imageUrl: '/chess/set1/0.jpg', 
     aiHint: 'chess king',
     category: 'chess',
     set: 'set1',
@@ -271,7 +270,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'chess-set1-queen',
     altText: 'A flashcard image of a chess queen piece.',
-    imageUrl: '/chess/set1/1.jpg', // Placeholder
+    imageUrl: '/chess/set1/1.jpg', 
     aiHint: 'chess queen',
     category: 'chess',
     set: 'set1',
@@ -280,7 +279,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'chess-set1-rook',
     altText: 'A flashcard image of a chess rook piece.',
-    imageUrl: '/chess/set1/2.jpg', // Placeholder
+    imageUrl: '/chess/set1/2.jpg', 
     aiHint: 'chess rook',
     category: 'chess',
     set: 'set1',
@@ -289,7 +288,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'chess-set1-bishop',
     altText: 'A flashcard image of a chess bishop piece.',
-    imageUrl: '/chess/set1/3.jpg', // Placeholder
+    imageUrl: '/chess/set1/3.jpg', 
     aiHint: 'chess bishop',
     category: 'chess',
     set: 'set1',
@@ -298,19 +297,18 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'chess-set1-knight',
     altText: 'A flashcard image of a chess knight piece.',
-    imageUrl: '/chess/set1/4.jpg', // Placeholder
+    imageUrl: '/chess/set1/4.jpg', 
     aiHint: 'chess knight',
     category: 'chess',
     set: 'set1',
     displayText: 'Knight',
   },
-  // Note: Pawn could be in a second set for chess pieces.
 
   // Transport category - Set 1
   {
     baseId: 'transport-set1-car',
     altText: 'A flashcard image of a red car.',
-    imageUrl: '/transport/set1/0.jpg', // Placeholder
+    imageUrl: '/transport/set1/0.jpg', 
     aiHint: 'red car',
     category: 'transport',
     set: 'set1',
@@ -319,7 +317,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'transport-set1-bus',
     altText: 'A flashcard image of a yellow school bus.',
-    imageUrl: '/transport/set1/1.jpg', // Placeholder
+    imageUrl: '/transport/set1/1.jpg', 
     aiHint: 'school bus',
     category: 'transport',
     set: 'set1',
@@ -328,7 +326,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'transport-set1-train',
     altText: 'A flashcard image of a passenger train.',
-    imageUrl: '/transport/set1/2.jpg', // Placeholder
+    imageUrl: '/transport/set1/2.jpg', 
     aiHint: 'train',
     category: 'transport',
     set: 'set1',
@@ -337,7 +335,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'transport-set1-airplane',
     altText: 'A flashcard image of an airplane.',
-    imageUrl: '/transport/set1/3.jpg', // Placeholder
+    imageUrl: '/transport/set1/3.jpg', 
     aiHint: 'airplane',
     category: 'transport',
     set: 'set1',
@@ -346,7 +344,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'transport-set1-bicycle',
     altText: 'A flashcard image of a bicycle.',
-    imageUrl: '/transport/set1/4.jpg', // Placeholder
+    imageUrl: '/transport/set1/4.jpg', 
     aiHint: 'bicycle',
     category: 'transport',
     set: 'set1',
@@ -358,7 +356,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'space-set1-earth',
     altText: 'A flashcard image of planet Earth.',
-    imageUrl: '/space/set1/0.jpg', // Placeholder
+    imageUrl: '/space/set1/0.jpg', 
     aiHint: 'planet earth',
     category: 'space',
     set: 'set1',
@@ -367,7 +365,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'space-set1-moon',
     altText: "A flashcard image of Earth's moon.",
-    imageUrl: '/space/set1/1.jpg', // Placeholder
+    imageUrl: '/space/set1/1.jpg', 
     aiHint: 'moon',
     category: 'space',
     set: 'set1',
@@ -376,7 +374,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'space-set1-sun',
     altText: 'A flashcard image of the Sun.',
-    imageUrl: '/space/set1/2.jpg', // Placeholder
+    imageUrl: '/space/set1/2.jpg', 
     aiHint: 'sun star',
     category: 'space',
     set: 'set1',
@@ -385,7 +383,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'space-set1-mars',
     altText: 'A flashcard image of planet Mars.',
-    imageUrl: '/space/set1/3.jpg', // Placeholder
+    imageUrl: '/space/set1/3.jpg', 
     aiHint: 'planet mars',
     category: 'space',
     set: 'set1',
@@ -394,7 +392,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'space-set1-stars',
     altText: 'A flashcard image of a starry night sky.',
-    imageUrl: '/space/set1/4.jpg', // Placeholder
+    imageUrl: '/space/set1/4.jpg', 
     aiHint: 'stars night sky',
     category: 'space',
     set: 'set1',
