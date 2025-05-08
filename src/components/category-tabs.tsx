@@ -16,7 +16,7 @@ export const CategoryTabs: FC<CategoryTabsProps> = ({
   onCategoryChange,
 }) => {
   return (
-    <div className="w-full flex justify-center py-2 md:py-4"> {/* Adjusted padding */}
+    <div className="w-full flex justify-center"> {/* Removed py-2 md:py-4 */}
       <Tabs value={activeCategory} onValueChange={onCategoryChange} className="w-auto">
         <TabsList className="overflow-x-auto max-w-full"> {/* Added overflow for smaller screens */}
           {categories.map((category) => (

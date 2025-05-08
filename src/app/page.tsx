@@ -10,8 +10,8 @@ import { CategoryTabs } from '@/components/category-tabs';
 import { SetTabs } from '@/components/set-tabs';
 import { DisplayModeTabs } from '@/components/display-mode-tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { Button } from '@/components/ui/button'; // No longer needed
-import { Loader2 } from 'lucide-react'; // PanelTopClose, PanelTopOpen no longer needed
+import { Button } from '@/components/ui/button';
+import { Loader2, PanelTopOpen, PanelTopClose } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function Home() {
   const [activeSet, setActiveSet] = useState<string | null>(null);
   const [activeDisplayMode, setActiveDisplayMode] = useState<'image' | 'text'>('image');
   
-  // const [showTabs, setShowTabs] = useState(true); // No longer needed as tabs are always shown
+  const [showTabs, setShowTabs] = useState(true);
 
   const uniqueCategories = useMemo(() => {
     const categories = new Set(allFlashcards.map(fc => fc.category.toLowerCase()));
@@ -39,6 +39,10 @@ export default function Home() {
       return cat.charAt(0).toUpperCase() + cat.slice(1);
     });
   }, [allFlashcards]);
+
+  const toggleTabsVisibility = useCallback(() => {
+    setShowTabs(prevShowTabs => !prevShowTabs);
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -160,9 +164,9 @@ export default function Home() {
     };
   }, [goToNext, goToPrevious]);
 
-  // const toggleTabsVisibility = useCallback(() => { // No longer needed
-  //   setShowTabs(prevShowTabs => !prevShowTabs);
-  // }, []);
+
+  const mainContentMarginTopClass = showTabs ? "mt-24 sm:mt-32 md:mt-40" : "mt-[calc(2.5rem+1rem)]"; // Button height (h-10 ~ 2.5rem) + py-2 (0.5rem * 2 = 1rem)
+
 
   if (isLoading && displayedFlashcards.length === 0) { 
     return (
@@ -191,31 +195,46 @@ export default function Home() {
   if (displayedFlashcards.length === 0 && !isLoading) {
      return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
-        {/* Button to toggle tabs visibility removed */}
         <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
-            {uniqueCategories.length > 0 && (
-            <CategoryTabs
-                categories={uniqueCategories}
-                activeCategory={activeCategory}
-                onCategoryChange={handleCategoryChange}
-            />
+          <div className="flex items-center w-full px-2 sm:px-4 py-2">
+            {showTabs && uniqueCategories.length > 0 ? (
+              <div className="flex-grow overflow-x-auto">
+                <CategoryTabs
+                  categories={uniqueCategories}
+                  activeCategory={activeCategory}
+                  onCategoryChange={handleCategoryChange}
+                />
+              </div>
+            ) : (
+              <div className="flex-grow"></div> 
             )}
-            {availableSets.length > 0 && activeSet && (
+            <Button
+              onClick={toggleTabsVisibility}
+              variant="outline"
+              size="icon"
+              className="ml-2 flex-shrink-0 shadow-sm"
+              aria-label={showTabs ? 'Hide Controls' : 'Show Controls'}
+            >
+              {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
+            </Button>
+          </div>
+
+          {showTabs && availableSets.length > 0 && activeSet && (
             <SetTabs
-                sets={availableSets}
-                activeSet={activeSet}
-                onSetChange={handleSetChange}
+              sets={availableSets}
+              activeSet={activeSet}
+              onSetChange={handleSetChange}
             />
-            )}
-            {activeCategory && 
-            ( (availableSets.length > 0 && activeSet) || availableSets.length === 0 ) && (
-                <DisplayModeTabs
+          )}
+          {showTabs && activeCategory && 
+            ((availableSets.length > 0 && activeSet) || availableSets.length === 0) && (
+              <DisplayModeTabs
                 activeDisplayMode={activeDisplayMode}
                 onDisplayModeChange={handleDisplayModeChange}
-                />
-            )}
+              />
+          )}
         </div>
-        <Card className="w-full max-w-md shadow-xl mt-24 sm:mt-32 md:mt-40"> {/* Added margin top to avoid overlap with fixed tabs */}
+        <Card className={`w-full max-w-md shadow-xl ${mainContentMarginTopClass}`}>
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-foreground">
               No Flashcards Available
@@ -241,23 +260,38 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden relative">
-      {/* Button to toggle tabs visibility removed */}
       <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
-        {uniqueCategories.length > 0 && (
-          <CategoryTabs
-            categories={uniqueCategories}
-            activeCategory={activeCategory}
-            onCategoryChange={handleCategoryChange}
-          />
-        )}
-        {availableSets.length > 0 && activeSet && (
+        <div className="flex items-center w-full px-2 sm:px-4 py-2">
+          {showTabs && uniqueCategories.length > 0 ? (
+            <div className="flex-grow overflow-x-auto">
+              <CategoryTabs
+                categories={uniqueCategories}
+                activeCategory={activeCategory}
+                onCategoryChange={handleCategoryChange}
+              />
+            </div>
+          ) : (
+            <div className="flex-grow"></div> 
+          )}
+          <Button
+            onClick={toggleTabsVisibility}
+            variant="outline"
+            size="icon"
+            className="ml-2 flex-shrink-0 shadow-sm"
+            aria-label={showTabs ? 'Hide Controls' : 'Show Controls'}
+          >
+            {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
+          </Button>
+        </div>
+        
+        {showTabs && availableSets.length > 0 && activeSet && (
           <SetTabs
             sets={availableSets}
             activeSet={activeSet}
             onSetChange={handleSetChange}
           />
         )}
-        {activeCategory && 
+        {showTabs && activeCategory && 
           ( (availableSets.length > 0 && activeSet) || availableSets.length === 0 ) && (
           <DisplayModeTabs
             activeDisplayMode={activeDisplayMode}
@@ -266,7 +300,7 @@ export default function Home() {
         )}
       </div>
       
-      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mb-[80px] sm:mb-[100px] mt-24 sm:mt-32 md:mt-40"> {/* Added margin top to avoid overlap */}
+      <div className={`w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mb-[80px] sm:mb-[100px] ${mainContentMarginTopClass}`}>
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
         {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
           <FlashcardImage flashcard={displayedFlashcards[currentIndex]} />
