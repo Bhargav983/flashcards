@@ -33,6 +33,7 @@ export default function Home() {
   
   const [showTabs, setShowTabs] = useState(true);
   const [imageZoom, setImageZoom] = useState(1);
+  const [imageRotation, setImageRotation] = useState(0);
 
   const uniqueCategories = useMemo(() => {
     const categories = new Set(allFlashcards.map(fc => fc.category.toLowerCase()));
@@ -52,6 +53,10 @@ export default function Home() {
 
   const handleZoomOut = useCallback(() => {
     setImageZoom(prevZoom => Math.max(prevZoom - 0.1, 0.5));
+  }, []);
+
+  const handleRotateImage = useCallback(() => {
+    setImageRotation(prevRotation => (prevRotation + 90) % 360);
   }, []);
 
 
@@ -117,6 +122,7 @@ export default function Home() {
     setDisplayedFlashcards(cardsToDisplay);
     setCurrentIndex(0);
     setImageZoom(1);
+    setImageRotation(0); // Reset rotation on card change
     setIsLoading(false);
   }, [activeCategory, activeSet, allFlashcards, availableSets, activeDisplayMode]);
 
@@ -165,6 +171,7 @@ export default function Home() {
       if (e.key === 'ArrowLeft') goToPrevious();
       if (e.key === '+' || e.key === '=') handleZoomIn();
       if (e.key === '-' || e.key === '_') handleZoomOut();
+      if (e.key === 'r' || e.key === 'R') handleRotateImage(); // Added keyboard shortcut for rotation
     };
 
     window.addEventListener('touchstart', handleTouchStart);
@@ -176,7 +183,7 @@ export default function Home() {
       window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [goToNext, goToPrevious, handleZoomIn, handleZoomOut]);
+  }, [goToNext, goToPrevious, handleZoomIn, handleZoomOut, handleRotateImage]);
   
   const controlButtonRowHeight = "3rem"; 
   
@@ -196,7 +203,6 @@ export default function Home() {
   const commonWrapperStyle = useMemo(() => ({
     paddingTop: `calc(${controlButtonRowHeight} + ${headerApproxHeight} + 1rem)`, 
     paddingBottom: `calc(${footerApproxHeight} + 1rem)`,
-    height: `calc(100vh - ${controlButtonRowHeight} - ${headerApproxHeight} - ${footerApproxHeight})`,
     minHeight: '300px', 
   }), [headerApproxHeight, footerApproxHeight, controlButtonRowHeight]);
 
@@ -354,7 +360,7 @@ export default function Home() {
       </div>
       
       <div 
-        className="w-full max-w-7xl mx-auto flex-grow flex flex-col items-center justify-center relative px-4"
+        className="w-full mx-auto flex-grow flex flex-col items-center justify-center relative px-4"
         style={commonWrapperStyle}
       >
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
@@ -362,11 +368,16 @@ export default function Home() {
           <>
             <FlashcardImage 
               flashcard={displayedFlashcards[currentIndex]} 
-              zoomLevel={imageZoom} 
+              zoomLevel={imageZoom}
+              imageRotation={imageRotation}
             />
             {activeDisplayMode === 'image' && displayedFlashcards[currentIndex].imageUrl && (
-              <div className="absolute bottom-24 right-4 z-30 flex flex-col space-y-2 md:bottom-24 md:right-8">
-                <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
+              <div className="absolute bottom-48 right-4 z-30 flex flex-col space-y-2 md:bottom-48 md:right-8">
+                <ZoomControls 
+                  onZoomIn={handleZoomIn} 
+                  onZoomOut={handleZoomOut}
+                  onRotate={handleRotateImage} 
+                />
               </div>
             )}
           </>
