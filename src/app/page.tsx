@@ -144,7 +144,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center space-y-4 py-12">
             <p className="text-muted-foreground">
-              Could not load flashcards for this category: {activeCategory}. Ensure images are present in the /public/{activeCategory.toLowerCase().replace(/\s+/g, '-')} folder and named 0.jpg, 1.jpg, etc.
+              Could not load flashcards for this category: {activeCategory}. Ensure images are present in the new set-based folder structure, e.g., /public/{activeCategory.toLowerCase().replace(/\s+/g, '-')}/set1/0.jpg, set1/1.jpg, etc.
             </p>
           </CardContent>
         </Card>
