@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -163,22 +164,29 @@ export default function Home() {
     };
   }, [goToNext, goToPrevious]);
 
-  const headerApproxHeight = useMemo(() => (showTabs ? "10rem" : "3rem"), [showTabs]); // Approx: md:h-40 is 10rem, tabs only is ~3rem
-  const footerApproxHeight = "6rem"; // Approx: nav controls p-6 + button h-11 -> ~100px
+  const headerApproxHeight = useMemo(() => {
+    if (!showTabs) return "0rem"; // No tabs, no header space needed other than button
+    let height = 2.5; // Base for category tabs (approx h-10)
+    if (availableSets.length > 0 && activeSet) height += 2.5; // Approx for set tabs
+    if (activeCategory && ((availableSets.length > 0 && activeSet) || availableSets.length === 0)) height += 2.5; // Approx for display mode tabs
+    return `${height}rem`;
+  }, [showTabs, availableSets, activeSet, activeCategory]);
+  
+  const controlButtonRowHeight = "3rem"; // Approx height for the row containing the toggle button
+  const footerApproxHeight = displayedFlashcards.length > 1 ? "6rem" : "0rem";
 
   const commonWrapperStyle = useMemo(() => ({
-    paddingTop: `calc(${headerApproxHeight} + 1rem)`,
+    paddingTop: `calc(${controlButtonRowHeight} + ${headerApproxHeight} + 1rem)`, // control button row + tabs height + padding
     paddingBottom: `calc(${footerApproxHeight} + 1rem)`,
-  }), [headerApproxHeight, footerApproxHeight]);
+  }), [headerApproxHeight, footerApproxHeight, controlButtonRowHeight]);
 
 
   if (isLoading && displayedFlashcards.length === 0) { 
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4" style={commonWrapperStyle}>
         <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
-          {/* Minimal header for loading state, or full if needed */}
-           <div className="flex items-center w-full px-2 sm:px-4 py-2">
-            <div className="flex-grow"></div> {/* Placeholder for tabs area */}
+           <div className="flex items-center w-full px-2 sm:px-4 py-2" style={{height: controlButtonRowHeight}}>
+            <div className="flex-grow"></div> 
             <Button
               onClick={toggleTabsVisibility}
               variant="outline"
@@ -201,7 +209,6 @@ export default function Home() {
             <p className="text-muted-foreground">Please wait a moment.</p>
           </CardContent>
         </Card>
-         {/* Minimal footer for loading state */}
         <div className="fixed bottom-0 left-0 right-0 z-10" style={{ height: footerApproxHeight }}></div>
       </div>
     );
@@ -217,18 +224,16 @@ export default function Home() {
      return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4" style={commonWrapperStyle}>
         <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
-          <div className="flex items-center w-full px-2 sm:px-4 py-2">
-            {showTabs && uniqueCategories.length > 0 ? (
-              <div className="flex-grow overflow-x-auto">
+          <div className="flex items-center w-full px-2 sm:px-4 py-2" style={{height: controlButtonRowHeight}}>
+            <div className="flex-grow">
+             {showTabs && uniqueCategories.length > 0 && (
                 <CategoryTabs
                   categories={uniqueCategories}
                   activeCategory={activeCategory}
                   onCategoryChange={handleCategoryChange}
                 />
-              </div>
-            ) : (
-              <div className="flex-grow"></div> 
-            )}
+              )}
+            </div>
             <Button
               onClick={toggleTabsVisibility}
               variant="outline"
@@ -275,7 +280,6 @@ export default function Home() {
             </p>
           </CardContent>
         </Card>
-        {/* Minimal footer for no flashcards state */}
         <div className="fixed bottom-0 left-0 right-0 z-10" style={{ height: footerApproxHeight }}></div>
       </div>
     );
@@ -284,18 +288,16 @@ export default function Home() {
   return (
     <main className="flex flex-col min-h-screen bg-background overflow-hidden">
       <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
-        <div className="flex items-center w-full px-2 sm:px-4 py-2">
-          {showTabs && uniqueCategories.length > 0 ? (
-            <div className="flex-grow overflow-x-auto">
-              <CategoryTabs
-                categories={uniqueCategories}
-                activeCategory={activeCategory}
-                onCategoryChange={handleCategoryChange}
-              />
+        <div className="flex items-center w-full px-2 sm:px-4 py-2" style={{height: controlButtonRowHeight}}>
+           <div className="flex-grow overflow-x-auto">
+            {showTabs && uniqueCategories.length > 0 && (
+                <CategoryTabs
+                  categories={uniqueCategories}
+                  activeCategory={activeCategory}
+                  onCategoryChange={handleCategoryChange}
+                />
+            )}
             </div>
-          ) : (
-            <div className="flex-grow"></div> 
-          )}
           <Button
             onClick={toggleTabsVisibility}
             variant="outline"
@@ -345,3 +347,4 @@ export default function Home() {
     </main>
   );
 }
+
