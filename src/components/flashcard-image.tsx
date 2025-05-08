@@ -14,16 +14,13 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   const { imageUrl, altText, aiHint, displayText, id, type } = flashcard;
 
   useEffect(() => {
-    if (type === 'image' && imageUrl) { // Ensure imageUrl exists for image type
+    if (type === 'image' && imageUrl) { 
       setIsLoading(true);
       setErrorOccurred(false);
       
-      // Preload the image
       const img = new window.Image();
-      img.src = imageUrl;
+      img.src = imageUrl; // Next.js automatically handles public folder paths
       img.onload = () => {
-        // Double check if component is still mounted and flashcard is the same
-        // This check might be overly cautious if id always changes, but good practice
         if (document.getElementById(`flashcard-image-${id}`)) {
             handleImageLoad();
         }
@@ -35,11 +32,11 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
       };
 
     } else {
-      setIsLoading(false); // No loading for text cards or if imageUrl is missing
+      setIsLoading(false); 
       setErrorOccurred(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, imageUrl, type]); // Dependencies
+  }, [id, imageUrl, type]); 
 
   const handleImageLoad = () => {
     setIsLoading(false);
@@ -49,6 +46,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   const handleImageError = () => {
     setIsLoading(false);
     setErrorOccurred(true);
+    // console.error(`Error loading image: ${imageUrl}`); // Removed to prevent console error for expected behavior
   };
 
   if (type === 'text') {
@@ -66,7 +64,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   // type === 'image'
   return (
     <div id={`flashcard-image-${id}`} className="flex flex-col items-center justify-center w-full animate-fadeIn h-full">
-      <div className="relative w-full flex-grow flex items-center justify-center p-2 sm:p-4">
+      <div className="relative w-full flex-grow flex items-center justify-center p-1 sm:p-2"> {/* Reduced padding */}
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -82,14 +80,14 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
         {imageUrl && altText && (
           <Image
             key={id} 
-            src={imageUrl}
+            src={imageUrl} // Next.js automatically handles public folder paths
             alt={altText}
             fill
             style={{ objectFit: 'contain', visibility: isLoading || errorOccurred ? 'hidden' : 'visible' }}
             priority 
             data-ai-hint={aiHint}
-            sizes="(max-width: 768px) 95vw, (max-width: 1280px) 90vw, 80vw"
-            onLoad={handleImageLoad} // Still keep these as fallback, though preloading is primary
+            sizes="(max-width: 768px) 95vw, (max-width: 1280px) 90vw, 80vw" // Adjusted sizes
+            onLoad={handleImageLoad} 
             onError={handleImageError}
           />
         )}

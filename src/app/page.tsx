@@ -165,7 +165,7 @@ export default function Home() {
   }, [goToNext, goToPrevious]);
 
 
-  const mainContentMarginTopClass = showTabs ? "mt-24 sm:mt-32 md:mt-40" : "mt-8"; // Adjusted for hidden tabs
+  const mainContentMarginTopClass = showTabs ? "mt-24 sm:mt-32 md:mt-40" : "mt-8"; 
 
   if (isLoading && displayedFlashcards.length === 0) { 
     return (
@@ -299,7 +299,7 @@ export default function Home() {
         )}
       </div>
       
-      <div className={`w-full max-w-5xl flex-grow flex flex-col items-center justify-center relative px-4 mb-[80px] sm:mb-[100px] ${mainContentMarginTopClass}`}>
+      <div className={`w-full max-w-7xl flex-grow flex flex-col items-center justify-center relative px-4 mb-[80px] sm:mb-[100px] ${mainContentMarginTopClass}`}>
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
         {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
           <FlashcardImage flashcard={displayedFlashcards[currentIndex]} />
