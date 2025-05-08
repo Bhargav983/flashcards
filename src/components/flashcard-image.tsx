@@ -31,13 +31,14 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   const handleImageError = () => {
     setIsLoading(false);
     setErrorOccurred(true);
+    // console.error(`Error loading image: ${imageUrl}`); // Removed console.error as per user request
   };
 
   if (type === 'text') {
     return (
       <div className="flex flex-col items-center justify-center w-full animate-fadeIn h-full p-4">
         <div className="text-center">
-          <p className="text-5xl sm:text-6xl md:text-7xl font-bold text-foreground break-words">
+          <p className="text-5xl sm:text-6xl md:text-7xl font-bold text-bright-red break-words">
             {displayText}
           </p>
         </div>
@@ -63,7 +64,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
         )}
         {imageUrl && altText && (
           <Image
-            key={id} // key uses the flashcard id, which changes for text vs image
+            key={id} 
             src={imageUrl}
             alt={altText}
             fill
@@ -76,7 +77,6 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
           />
         )}
       </div>
-      {/* Text display for image cards is removed as per new requirement */}
     </div>
   );
 }
