@@ -37,14 +37,56 @@ export const flashcards: Flashcard[] = [
   {
     id: 'fruit-3',
     altText: 'A flashcard image from the fruit category.',
-    imageUrl: '/fruit/3.jpg', // Was /fruits/mango.jpg
+    imageUrl: '/fruit/3.jpeg', // Was /fruits/mango.jpg
     aiHint: 'fruit',
     category: 'fruit',
   },
   {
     id: 'fruit-4',
     altText: 'A flashcard image from the fruit category.',
-    imageUrl: '/fruit/4.jpg', // Was /fruits/strawberry.jpg
+    imageUrl: '/fruit/4.png', // Was /fruits/strawberry.jpg
+    aiHint: 'fruit',
+    category: 'fruit',
+  },
+  {
+    id: 'fruit-5',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/5.jpg', // Was /fruits/strawberry.jpg
+    aiHint: 'fruit',
+    category: 'fruit',
+  },
+  {
+    id: 'fruit-6',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/6.jpg', // Was /fruits/strawberry.jpg
+    aiHint: 'fruit',
+    category: 'fruit',
+  },
+  {
+    id: 'fruit-7',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/7.jpg', // Was /fruits/strawberry.jpg
+    aiHint: 'fruit',
+    category: 'fruit',
+  },
+  {
+    id: 'fruit-8',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/8.jpg', // Was /fruits/strawberry.jpg
+    aiHint: 'fruit',
+    category: 'fruit',
+  },
+  {
+    id: 'fruit-9',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/9.jpg', // Was /fruits/strawberry.jpg
+    aiHint: 'fruit',
+    category: 'fruit',
+  },
+  {
+    id: 'fruit-10',
+    altText: 'A flashcard image from the fruit category.',
+    imageUrl: '/fruit/10.jpg', // Was /fruits/strawberry.jpg
     aiHint: 'fruit',
     category: 'fruit',
   },
