@@ -19,7 +19,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
       setErrorOccurred(false);
       
       const img = new window.Image();
-      img.src = imageUrl; // Next.js automatically handles public folder paths
+      img.src = imageUrl; 
       img.onload = () => {
         if (document.getElementById(`flashcard-image-${id}`)) {
             handleImageLoad();
@@ -46,7 +46,6 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   const handleImageError = () => {
     setIsLoading(false);
     setErrorOccurred(true);
-    // console.error(`Error loading image: ${imageUrl}`); // Removed to prevent console error for expected behavior
   };
 
   if (type === 'text') {
@@ -64,7 +63,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   // type === 'image'
   return (
     <div id={`flashcard-image-${id}`} className="flex flex-col items-center justify-center w-full animate-fadeIn h-full">
-      <div className="relative w-full flex-grow flex items-center justify-center p-1 sm:p-2"> {/* Reduced padding */}
+      <div className="relative w-full h-full flex items-center justify-center p-2 sm:p-4"> {/* Reduced padding, ensure h-full */}
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -80,13 +79,13 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
         {imageUrl && altText && (
           <Image
             key={id} 
-            src={imageUrl} // Next.js automatically handles public folder paths
+            src={imageUrl}
             alt={altText}
             fill
             style={{ objectFit: 'contain', visibility: isLoading || errorOccurred ? 'hidden' : 'visible' }}
             priority 
             data-ai-hint={aiHint}
-            sizes="(max-width: 768px) 95vw, (max-width: 1280px) 90vw, 80vw" // Adjusted sizes
+            sizes="(max-width: 768px) 95vw, (max-width: 1280px) 90vw, 80vw" 
             onLoad={handleImageLoad} 
             onError={handleImageError}
           />

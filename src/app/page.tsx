@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -164,12 +163,33 @@ export default function Home() {
     };
   }, [goToNext, goToPrevious]);
 
+  const headerApproxHeight = useMemo(() => (showTabs ? "10rem" : "3rem"), [showTabs]); // Approx: md:h-40 is 10rem, tabs only is ~3rem
+  const footerApproxHeight = "6rem"; // Approx: nav controls p-6 + button h-11 -> ~100px
 
-  const mainContentMarginTopClass = showTabs ? "mt-24 sm:mt-32 md:mt-40" : "mt-8"; 
+  const commonWrapperStyle = useMemo(() => ({
+    paddingTop: `calc(${headerApproxHeight} + 1rem)`,
+    paddingBottom: `calc(${footerApproxHeight} + 1rem)`,
+  }), [headerApproxHeight, footerApproxHeight]);
+
 
   if (isLoading && displayedFlashcards.length === 0) { 
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4" style={commonWrapperStyle}>
+        <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
+          {/* Minimal header for loading state, or full if needed */}
+           <div className="flex items-center w-full px-2 sm:px-4 py-2">
+            <div className="flex-grow"></div> {/* Placeholder for tabs area */}
+            <Button
+              onClick={toggleTabsVisibility}
+              variant="outline"
+              size="icon"
+              className="ml-2 flex-shrink-0 shadow-sm"
+              aria-label={showTabs ? 'Hide Controls' : 'Show Controls'}
+            >
+              {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
+            </Button>
+          </div>
+        </div>
         <Card className="w-full max-w-md shadow-xl">
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-foreground">
@@ -181,6 +201,8 @@ export default function Home() {
             <p className="text-muted-foreground">Please wait a moment.</p>
           </CardContent>
         </Card>
+         {/* Minimal footer for loading state */}
+        <div className="fixed bottom-0 left-0 right-0 z-10" style={{ height: footerApproxHeight }}></div>
       </div>
     );
   }
@@ -193,7 +215,7 @@ export default function Home() {
 
   if (displayedFlashcards.length === 0 && !isLoading) {
      return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4" style={commonWrapperStyle}>
         <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
           <div className="flex items-center w-full px-2 sm:px-4 py-2">
             {showTabs && uniqueCategories.length > 0 ? (
@@ -233,7 +255,7 @@ export default function Home() {
               />
           )}
         </div>
-        <Card className={`w-full max-w-md shadow-xl ${mainContentMarginTopClass}`}>
+        <Card className={`w-full max-w-md shadow-xl`}>
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-foreground">
               No Flashcards Available
@@ -253,12 +275,14 @@ export default function Home() {
             </p>
           </CardContent>
         </Card>
+        {/* Minimal footer for no flashcards state */}
+        <div className="fixed bottom-0 left-0 right-0 z-10" style={{ height: footerApproxHeight }}></div>
       </div>
     );
   }
 
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden relative">
+    <main className="flex flex-col min-h-screen bg-background overflow-hidden">
       <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
         <div className="flex items-center w-full px-2 sm:px-4 py-2">
           {showTabs && uniqueCategories.length > 0 ? (
@@ -299,21 +323,25 @@ export default function Home() {
         )}
       </div>
       
-      <div className={`w-full max-w-7xl flex-grow flex flex-col items-center justify-center relative px-4 mb-[80px] sm:mb-[100px] ${mainContentMarginTopClass}`}>
+      <div 
+        className="w-full max-w-7xl mx-auto flex-grow flex flex-col items-center justify-center relative px-4"
+        style={commonWrapperStyle}
+      >
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
         {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
           <FlashcardImage flashcard={displayedFlashcards[currentIndex]} />
         )}
       </div>
       {displayedFlashcards.length > 1 && (
-        <NavigationControls
-          onPrevious={goToPrevious}
-          onNext={goToNext}
-          canGoPrevious={true} 
-          canGoNext={true}
-        />
+         <div className="fixed bottom-0 left-0 right-0 z-10" style={{ height: footerApproxHeight }}>
+            <NavigationControls
+              onPrevious={goToPrevious}
+              onNext={goToNext}
+              canGoPrevious={true} 
+              canGoNext={true}
+            />
+        </div>
       )}
     </main>
   );
 }
-

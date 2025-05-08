@@ -15,7 +15,7 @@ export function NavigationControls({
   canGoNext,
 }: NavigationControlsProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 flex justify-between items-center p-6 bg-background/80 backdrop-blur-sm">
+    <div className="absolute bottom-0 left-0 right-0 flex justify-between items-center p-6 bg-background/80 backdrop-blur-sm h-full">
       <Button
         onClick={onPrevious}
         disabled={!canGoPrevious}
