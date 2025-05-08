@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -7,7 +8,7 @@ import { FlashcardImage } from '@/components/flashcard-image';
 import { NavigationControls } from '@/components/navigation-controls';
 import { CategoryTabs } from '@/components/category-tabs';
 import { SetTabs } from '@/components/set-tabs';
-import { DisplayModeTabs } from '@/components/display-mode-tabs'; // Import DisplayModeTabs
+import { DisplayModeTabs } from '@/components/display-mode-tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, PanelTopClose, PanelTopOpen } from 'lucide-react';
@@ -27,7 +28,7 @@ export default function Home() {
 
   const [availableSets, setAvailableSets] = useState<string[]>([]);
   const [activeSet, setActiveSet] = useState<string | null>(null);
-  const [activeDisplayMode, setActiveDisplayMode] = useState<'image' | 'text'>('image'); // New state for display mode
+  const [activeDisplayMode, setActiveDisplayMode] = useState<'image' | 'text'>('image');
   
   const [showTabs, setShowTabs] = useState(true);
 
@@ -101,23 +102,20 @@ export default function Home() {
     setDisplayedFlashcards(cardsToDisplay);
     setCurrentIndex(0);
     setIsLoading(false);
-  }, [activeCategory, activeSet, allFlashcards, availableSets, activeDisplayMode]); // Added activeDisplayMode
+  }, [activeCategory, activeSet, allFlashcards, availableSets, activeDisplayMode]);
 
   const handleCategoryChange = useCallback((category: string) => {
     setActiveCategory(category);
-    // activeSet will be reset by the first useEffect if necessary
-    // activeDisplayMode remains, or can be reset here if desired e.g., setActiveDisplayMode('image');
     router.push('/', { scroll: false }); 
   }, [router]);
 
   const handleSetChange = useCallback((set: string) => {
     setActiveSet(set);
-    // activeDisplayMode remains, or can be reset here
   }, []);
 
   const handleDisplayModeChange = useCallback((mode: 'image' | 'text') => {
     setActiveDisplayMode(mode);
-    setCurrentIndex(0); // Reset index when display mode changes
+    setCurrentIndex(0); 
   }, []);
 
   const goToPrevious = useCallback(() => {
@@ -166,7 +164,7 @@ export default function Home() {
     setShowTabs(prevShowTabs => !prevShowTabs);
   }, []);
 
-  if (isLoading && displayedFlashcards.length === 0) { // More precise loading condition
+  if (isLoading && displayedFlashcards.length === 0) { 
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
         <Card className="w-full max-w-md shadow-xl">
@@ -192,13 +190,13 @@ export default function Home() {
 
   if (displayedFlashcards.length === 0 && !isLoading) {
      return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 pt-16 md:pt-24">
-        <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-20 bg-background/80 backdrop-blur-sm">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 pt-[11rem] md:pt-[12rem]">
+        <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-30 bg-background/80 backdrop-blur-sm">
           <Button onClick={toggleTabsVisibility} variant="outline" size="icon" aria-label={showTabs ? "Hide Controls" : "Show Controls"} className="shadow-md">
             {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
           </Button>
         </div>
-        <div className="fixed top-12 md:top-16 left-0 right-0 z-10 bg-background/80 backdrop-blur-sm">
+        <div className="fixed top-12 md:top-16 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
             {showTabs && uniqueCategories.length > 0 && (
             <CategoryTabs
                 categories={uniqueCategories}
@@ -221,7 +219,7 @@ export default function Home() {
                 />
             )}
         </div>
-        <Card className="w-full max-w-md shadow-xl mt-4">
+        <Card className="w-full max-w-md shadow-xl">
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-foreground">
               No Flashcards Available
@@ -246,13 +244,13 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden pt-16 md:pt-24 relative">
-      <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-20 bg-background/80 backdrop-blur-sm">
+    <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden pt-[11rem] md:pt-[12rem] relative">
+      <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-30 bg-background/80 backdrop-blur-sm">
           <Button onClick={toggleTabsVisibility} variant="outline" size="icon" aria-label={showTabs ? "Hide Controls" : "Show Controls"} className="shadow-md">
             {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
           </Button>
       </div>
-      <div className="fixed top-12 md:top-16 left-0 right-0 z-10 bg-background/80 backdrop-blur-sm flex flex-col"> {/* Container for all tabs */}
+      <div className="fixed top-12 md:top-16 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
         {showTabs && uniqueCategories.length > 0 && (
           <CategoryTabs
             categories={uniqueCategories}
@@ -267,7 +265,6 @@ export default function Home() {
             onSetChange={handleSetChange}
           />
         )}
-        {/* DisplayModeTabs: Show if a category is active, AND ( (it has sets AND a set is active) OR it has no sets at all ) */}
         {showTabs && activeCategory && 
           ( (availableSets.length > 0 && activeSet) || availableSets.length === 0 ) && (
           <DisplayModeTabs
@@ -277,7 +274,7 @@ export default function Home() {
         )}
       </div>
       
-      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mt-16 md:mt-24 mb-[80px] sm:mb-[100px]"> {/* Adjusted top margin to account for potentially three rows of tabs */}
+      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mb-[80px] sm:mb-[100px]">
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
         {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
           <FlashcardImage flashcard={displayedFlashcards[currentIndex]} />
@@ -294,3 +291,4 @@ export default function Home() {
     </main>
   );
 }
+
