@@ -1,26 +1,17 @@
 
 export interface Flashcard {
   id: string;
-  altText: string;
-  imageUrl: string;
-  aiHint: string;
   category: string;
-  set: string; // e.g., "set1", "set2"
-  displayText?: string; // Text to be displayed with the flashcard
+  set: string; 
+  type: 'image' | 'text';
+  displayText?: string; // Mandatory for text type, undefined for image type
+  imageUrl?: string; // Mandatory for image type, undefined for text type
+  altText?: string; // Mandatory for image type, undefined for text type
+  aiHint?: string; // Optional, more relevant for image type
 }
 
-// Assumes images are named 0.jpg, 1.jpg, etc. (with original extensions preserved)
-// in corresponding lowercase category and set folders under /public/
-// For example:
-// - /public/fruit/set1/0.jpg
-// - /public/fruit/set1/1.jpg
-// - /public/vegetable/set1/0.jpg
-// Each set ideally contains 5 images. If a category has more, they are split into multiple sets.
-// If a category has fewer, they form a single set with the available images.
-
-export const flashcards: Flashcard[] = [
-  // Fruit category
-  // Set 1
+const originalFlashcards: Omit<Flashcard, 'type'> & { displayText: string; imageUrl: string; altText: string; aiHint: string }[] = [
+  // Fruit category - Set 1
   {
     id: 'fruit-set1-0',
     altText: 'A flashcard image of an apple.',
@@ -49,7 +40,7 @@ export const flashcards: Flashcard[] = [
     displayText: 'Orange',
   },
   {
-    id: 'fruit-set1-3', // Was fruit/3.jpeg
+    id: 'fruit-set1-3',
     altText: 'A flashcard image of grapes.',
     imageUrl: '/fruit/set1/3.jpeg',
     aiHint: 'fruit',
@@ -58,7 +49,7 @@ export const flashcards: Flashcard[] = [
     displayText: 'Grapes',
   },
   {
-    id: 'fruit-set1-4', // Was fruit/4.png
+    id: 'fruit-set1-4',
     altText: 'A flashcard image of a strawberry.',
     imageUrl: '/fruit/set1/4.png',
     aiHint: 'fruit',
@@ -66,55 +57,55 @@ export const flashcards: Flashcard[] = [
     set: 'set1',
     displayText: 'Strawberry',
   },
-  // Set 2
+  // Fruit category - Set 2
   {
-    id: 'fruit-set2-0', // Was fruit/5.jpg
+    id: 'fruit-set2-0',
     altText: 'A flashcard image of a pear.',
-    imageUrl: '/fruit/set2/6.jpg', // Note: Source data had 6.jpg for this item, previously said fruit/5.jpg
+    imageUrl: '/fruit/set2/6.jpg',
     aiHint: 'fruit',
     category: 'fruit',
     set: 'set2',
     displayText: 'Pear',
   },
   {
-    id: 'fruit-set2-1', // Was fruit/6.jpg
+    id: 'fruit-set2-1',
     altText: 'A flashcard image of a mango.',
-    imageUrl: '/fruit/set2/7.jpg', // Note: Source data had 7.jpg
+    imageUrl: '/fruit/set2/7.jpg',
     aiHint: 'fruit',
     category: 'fruit',
     set: 'set2',
     displayText: 'Mango',
   },
   {
-    id: 'fruit-set2-2', // Was fruit/7.jpg
+    id: 'fruit-set2-2',
     altText: 'A flashcard image of a pineapple.',
-    imageUrl: '/fruit/set2/8.jpg', // Note: Source data had 8.jpg
+    imageUrl: '/fruit/set2/8.jpg',
     aiHint: 'fruit',
     category: 'fruit',
     set: 'set2',
     displayText: 'Pineapple',
   },
   {
-    id: 'fruit-set2-3', // Was fruit/8.jpg
+    id: 'fruit-set2-3',
     altText: 'A flashcard image of a kiwi.',
-    imageUrl: '/fruit/set2/9.jpg', // Note: Source data had 9.jpg
+    imageUrl: '/fruit/set2/9.jpg',
     aiHint: 'fruit',
     category: 'fruit',
     set: 'set2',
     displayText: 'Kiwi',
   },
   {
-    id: 'fruit-set2-4', // Was fruit/9.jpg
+    id: 'fruit-set2-4',
     altText: 'A flashcard image of a watermelon.',
-    imageUrl: '/fruit/set2/10.jpg', // Note: Source data had 10.jpg
+    imageUrl: '/fruit/set2/10.jpg',
     aiHint: 'fruit',
     category: 'fruit',
     set: 'set2',
     displayText: 'Watermelon',
   },
-  // Set 3
+  // Fruit category - Set 3
   {
-    id: 'fruit-set3-0', // Was fruit/10.jpg
+    id: 'fruit-set3-0',
     altText: 'A flashcard image of cherries.',
     imageUrl: '/fruit/set3/0.jpg',
     aiHint: 'fruit',
@@ -123,8 +114,7 @@ export const flashcards: Flashcard[] = [
     displayText: 'Cherries',
   },
 
-  // Vegetable category
-  // Set 1
+  // Vegetable category - Set 1
   {
     id: 'vegetable-set1-0',
     altText: 'A flashcard image of carrots.',
@@ -153,7 +143,7 @@ export const flashcards: Flashcard[] = [
     displayText: 'Capsicum',
   },
   {
-    id: 'vegetable-set1-3', // Corrected ID from vegetable-set1-2
+    id: 'vegetable-set1-3',
     altText: 'A flashcard image of eggplant.',
     imageUrl: '/vegetable/set1/eggplant.jpg',
     aiHint: 'vegetable',
@@ -162,7 +152,7 @@ export const flashcards: Flashcard[] = [
     displayText: 'Eggplant',
   },
   {
-    id: 'vegetable-set1-4', // Corrected ID from vegetable-set1-2
+    id: 'vegetable-set1-4',
     altText: 'A flashcard image of cucumbers.',
     imageUrl: '/vegetable/set1/cucumbers.jpg',
     aiHint: 'vegetable',
@@ -171,8 +161,7 @@ export const flashcards: Flashcard[] = [
     displayText: 'Cucumbers',
   },
 
-  // Astrology category
-  // Set 1
+  // Astrology category - Set 1
   {
     id: 'astrology-set1-0',
     altText: 'A flashcard image from the astrology category.',
@@ -192,8 +181,7 @@ export const flashcards: Flashcard[] = [
     displayText: 'Taurus',
   },
 
-  // AI/ML category
-  // Set 1
+  // AI/ML category - Set 1
   {
     id: 'ai-ml-set1-0',
     altText: 'A flashcard image from the ai-ml category.',
@@ -213,8 +201,7 @@ export const flashcards: Flashcard[] = [
     displayText: 'Algorithm',
   },
 
-  // Chess category
-  // Set 1
+  // Chess category - Set 1
   {
     id: 'chess-set1-0',
     altText: 'A flashcard image from the chess category.',
@@ -234,8 +221,7 @@ export const flashcards: Flashcard[] = [
     displayText: 'Queen',
   },
 
-  // Transport category
-  // Set 1
+  // Transport category - Set 1
   {
     id: 'transport-set1-0',
     altText: 'A flashcard image from the transport category.',
@@ -255,8 +241,7 @@ export const flashcards: Flashcard[] = [
     displayText: 'Bus',
   },
 
-  // Space category
-  // Set 1
+  // Space category - Set 1
   {
     id: 'space-set1-0',
     altText: 'A flashcard image from the space category.',
@@ -276,3 +261,32 @@ export const flashcards: Flashcard[] = [
     displayText: 'Moon',
   },
 ];
+
+export const flashcards: Flashcard[] = originalFlashcards.reduce((acc: Flashcard[], card) => {
+  // Add image card
+  acc.push({
+    id: card.id,
+    altText: card.altText,
+    imageUrl: card.imageUrl,
+    aiHint: card.aiHint,
+    category: card.category,
+    set: card.set,
+    type: 'image',
+    displayText: undefined, // Image cards do not display text directly
+  });
+
+  // Add text card
+  if (card.displayText) {
+    acc.push({
+      id: `${card.id}-text`,
+      displayText: card.displayText,
+      category: card.category,
+      set: card.set,
+      type: 'text',
+      imageUrl: undefined,
+      altText: undefined,
+      aiHint: undefined,
+    });
+  }
+  return acc;
+}, []);

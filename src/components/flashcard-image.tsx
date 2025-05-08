@@ -11,12 +11,17 @@ interface FlashcardImageProps {
 export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [errorOccurred, setErrorOccurred] = useState(false);
-  const { imageUrl, altText, aiHint, displayText, id } = flashcard;
+  const { imageUrl, altText, aiHint, displayText, id, type } = flashcard;
 
   useEffect(() => {
-    setIsLoading(true);
-    setErrorOccurred(false);
-  }, [id, imageUrl]); // Reset loading state when flashcard or its URL changes
+    if (type === 'image') {
+      setIsLoading(true);
+      setErrorOccurred(false);
+    } else {
+      setIsLoading(false); // No loading for text cards
+      setErrorOccurred(false);
+    }
+  }, [id, imageUrl, type]); // Reset loading state when flashcard or its URL changes
 
   const handleImageLoad = () => {
     setIsLoading(false);
@@ -28,9 +33,22 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
     setErrorOccurred(true);
   };
 
+  if (type === 'text') {
+    return (
+      <div className="flex flex-col items-center justify-center w-full animate-fadeIn h-full p-4">
+        <div className="text-center">
+          <p className="text-5xl sm:text-6xl md:text-7xl font-bold text-foreground break-words">
+            {displayText}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // type === 'image'
   return (
     <div className="flex flex-col items-center justify-center w-full animate-fadeIn h-full">
-      <div className="relative w-full flex-grow flex items-center justify-center p-2 sm:p-4"> {/* Adjusted height, make it flexible */}
+      <div className="relative w-full flex-grow flex items-center justify-center p-2 sm:p-4">
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -43,26 +61,22 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
             <p className="text-muted-foreground text-sm">Please check the image path.</p>
           </div>
         )}
-        <Image
-          key={id}
-          src={imageUrl}
-          alt={altText}
-          fill
-          style={{ objectFit: 'contain', visibility: isLoading || errorOccurred ? 'hidden' : 'visible' }}
-          priority // Prioritize loading the current image
-          data-ai-hint={aiHint}
-          sizes="(max-width: 640px) 90vw, (max-width: 1024px) 70vw, 60vw"
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-        />
+        {imageUrl && altText && (
+          <Image
+            key={id} // key uses the flashcard id, which changes for text vs image
+            src={imageUrl}
+            alt={altText}
+            fill
+            style={{ objectFit: 'contain', visibility: isLoading || errorOccurred ? 'hidden' : 'visible' }}
+            priority 
+            data-ai-hint={aiHint}
+            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 70vw, 60vw"
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+          />
+        )}
       </div>
-      {displayText && !isLoading && !errorOccurred && (
-        <div className="mt-2 sm:mt-4 p-2 text-center">
-          <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground break-words">
-            {displayText}
-          </p>
-        </div>
-      )}
+      {/* Text display for image cards is removed as per new requirement */}
     </div>
   );
 }
