@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -7,7 +6,8 @@ import { flashcards as allFlashcardsData, type Flashcard } from '@/lib/flashcard
 import { FlashcardImage } from '@/components/flashcard-image';
 import { NavigationControls } from '@/components/navigation-controls';
 import { CategoryTabs } from '@/components/category-tabs';
-import { SetTabs } from '@/components/set-tabs'; // Import SetTabs
+import { SetTabs } from '@/components/set-tabs';
+import { DisplayModeTabs } from '@/components/display-mode-tabs'; // Import DisplayModeTabs
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, PanelTopClose, PanelTopOpen } from 'lucide-react';
@@ -20,13 +20,14 @@ export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   
-  const defaultCategory = 'fruit'; // Normalized default category
+  const defaultCategory = 'fruit'; 
   const [activeCategory, setActiveCategory] = useState<string>(
     (allFlashcardsData.find(fc => fc.category === defaultCategory)?.category.charAt(0).toUpperCase() + defaultCategory.slice(1)) || 'Fruit'
-  ); // Display name for default
+  );
 
   const [availableSets, setAvailableSets] = useState<string[]>([]);
   const [activeSet, setActiveSet] = useState<string | null>(null);
+  const [activeDisplayMode, setActiveDisplayMode] = useState<'image' | 'text'>('image'); // New state for display mode
   
   const [showTabs, setShowTabs] = useState(true);
 
@@ -38,7 +39,6 @@ export default function Home() {
     });
   }, [allFlashcards]);
 
-  // Effect 1: Handle activeCategory change to update available sets and default active set
   useEffect(() => {
     setIsLoading(true);
     const currentCategoryNormalized = activeCategory.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-');
@@ -48,24 +48,20 @@ export default function Home() {
       const setsForThisCategory = Array.from(new Set(cardsForCategory.map(fc => fc.set))).sort();
       setAvailableSets(setsForThisCategory);
       if (setsForThisCategory.length > 0) {
-        // If activeSet is not valid for this new category, or if it's null, set to first set
         if (!activeSet || !setsForThisCategory.includes(activeSet)) {
           setActiveSet(setsForThisCategory[0]);
         }
-        // If activeSet was already valid, this effect won't change it,
-        // and the next effect will use the existing valid activeSet.
       } else {
-        setActiveSet(null); // No sets for this category
+        setActiveSet(null); 
       }
     } else {
       setAvailableSets([]);
       setActiveSet(null);
       setDisplayedFlashcards([]); 
-      // If the category was not found and it's not the default, try to switch to default
       if (currentCategoryNormalized !== defaultCategory) {
           const defaultCategoryDisplayName = uniqueCategories.find(c => c.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-') === defaultCategory) || defaultCategory;
           if (activeCategory !== defaultCategoryDisplayName) {
-             setActiveCategory(defaultCategoryDisplayName); // This will re-run this effect
+             setActiveCategory(defaultCategoryDisplayName);
           } else {
               setIsLoading(false); 
           }
@@ -73,22 +69,18 @@ export default function Home() {
           setIsLoading(false); 
       }
     }
-    // setIsLoading(false) will be primarily handled by the next effect after cards are loaded or confirmed empty
-  }, [activeCategory, allFlashcards, defaultCategory, uniqueCategories, activeSet]); // activeSet added to re-evaluate if it becomes invalid for a new category.
+  }, [activeCategory, allFlashcards, defaultCategory, uniqueCategories, activeSet]);
 
 
-  // Effect 2: Handle activeCategory or activeSet change to update displayed flashcards
   useEffect(() => {
     if (!activeCategory) {
       setIsLoading(false);
       return;
     }
-    // If there are sets for this category, but no active set is selected yet, wait.
     if (availableSets.length > 0 && !activeSet) {
-      // This state can occur during transition to a category that has sets, before activeSet is determined by Effect 1.
-      setDisplayedFlashcards([]); // Clear cards until a set is chosen
+      setDisplayedFlashcards([]); 
       setCurrentIndex(0);
-      setIsLoading(true); // Still loading as we need an active set
+      setIsLoading(true); 
       return;
     }
 
@@ -96,32 +88,36 @@ export default function Home() {
     const currentCategoryNormalized = activeCategory.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-');
     let cardsToDisplay: Flashcard[] = [];
 
-    if (activeSet) { // Category has sets, and a specific set is active
+    if (activeSet) { 
       cardsToDisplay = allFlashcards.filter(
-        fc => fc.category === currentCategoryNormalized && fc.set === activeSet
+        fc => fc.category === currentCategoryNormalized && fc.set === activeSet && fc.type === activeDisplayMode
       );
-    } else if (availableSets.length === 0) { // Category has no sets defined, show all cards for that category
+    } else if (availableSets.length === 0) { 
       cardsToDisplay = allFlashcards.filter(
-        fc => fc.category === currentCategoryNormalized
+        fc => fc.category === currentCategoryNormalized && fc.type === activeDisplayMode
       );
     }
-    // If availableSets.length > 0 but activeSet is null (should be handled by Effect 1),
-    // cardsToDisplay remains empty, which is a safe fallback.
 
     setDisplayedFlashcards(cardsToDisplay);
     setCurrentIndex(0);
     setIsLoading(false);
-  }, [activeCategory, activeSet, allFlashcards, availableSets]);
-
+  }, [activeCategory, activeSet, allFlashcards, availableSets, activeDisplayMode]); // Added activeDisplayMode
 
   const handleCategoryChange = useCallback((category: string) => {
     setActiveCategory(category);
     // activeSet will be reset by the first useEffect if necessary
+    // activeDisplayMode remains, or can be reset here if desired e.g., setActiveDisplayMode('image');
     router.push('/', { scroll: false }); 
   }, [router]);
 
   const handleSetChange = useCallback((set: string) => {
     setActiveSet(set);
+    // activeDisplayMode remains, or can be reset here
+  }, []);
+
+  const handleDisplayModeChange = useCallback((mode: 'image' | 'text') => {
+    setActiveDisplayMode(mode);
+    setCurrentIndex(0); // Reset index when display mode changes
   }, []);
 
   const goToPrevious = useCallback(() => {
@@ -170,7 +166,7 @@ export default function Home() {
     setShowTabs(prevShowTabs => !prevShowTabs);
   }, []);
 
-  if (isLoading) {
+  if (isLoading && displayedFlashcards.length === 0) { // More precise loading condition
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
         <Card className="w-full max-w-md shadow-xl">
@@ -188,28 +184,43 @@ export default function Home() {
     );
   }
   
+  const currentCategoryPath = activeCategory.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-');
+  const imagePathHint = activeSet ?
+    `public/${currentCategoryPath}/${activeSet}/your-image.jpg` :
+    (availableSets.length === 0 ? `public/${currentCategoryPath}/your-image.jpg` : `public/${currentCategoryPath}/setX/your-image.jpg (select a set)`);
+
+
   if (displayedFlashcards.length === 0 && !isLoading) {
      return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
-        <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-20">
-          <Button onClick={toggleTabsVisibility} variant="outline" size="icon" aria-label={showTabs ? "Hide Categories" : "Show Categories"}>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 pt-16 md:pt-24">
+        <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-20 bg-background/80 backdrop-blur-sm">
+          <Button onClick={toggleTabsVisibility} variant="outline" size="icon" aria-label={showTabs ? "Hide Controls" : "Show Controls"} className="shadow-md">
             {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
           </Button>
         </div>
-        {showTabs && uniqueCategories.length > 0 && (
-          <CategoryTabs
-            categories={uniqueCategories}
-            activeCategory={activeCategory}
-            onCategoryChange={handleCategoryChange}
-          />
-        )}
-        {showTabs && availableSets.length > 0 && activeSet && (
-          <SetTabs
-            sets={availableSets}
-            activeSet={activeSet}
-            onSetChange={handleSetChange}
-          />
-        )}
+        <div className="fixed top-12 md:top-16 left-0 right-0 z-10 bg-background/80 backdrop-blur-sm">
+            {showTabs && uniqueCategories.length > 0 && (
+            <CategoryTabs
+                categories={uniqueCategories}
+                activeCategory={activeCategory}
+                onCategoryChange={handleCategoryChange}
+            />
+            )}
+            {showTabs && availableSets.length > 0 && activeSet && (
+            <SetTabs
+                sets={availableSets}
+                activeSet={activeSet}
+                onSetChange={handleSetChange}
+            />
+            )}
+            {showTabs && activeCategory && 
+            ( (availableSets.length > 0 && activeSet) || availableSets.length === 0 ) && (
+                <DisplayModeTabs
+                activeDisplayMode={activeDisplayMode}
+                onDisplayModeChange={handleDisplayModeChange}
+                />
+            )}
+        </div>
         <Card className="w-full max-w-md shadow-xl mt-4">
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-foreground">
@@ -218,11 +229,15 @@ export default function Home() {
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center space-y-4 py-12">
             <p className="text-muted-foreground text-center">
-              No flashcards found for {activeCategory}
-              {activeSet ? ` - Set ${activeSet.replace('set', '')}` : ''}.
-              <br />
-              Ensure images are present in{' '}
-              <code>public/{activeCategory.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-')}/{activeSet || 'setX'}/image.jpg</code>.
+                No {activeDisplayMode === 'image' ? 'images' : 'text cards'} found for {activeCategory}
+                {activeSet ? ` - Set ${activeSet.replace('set', '')}` : ''}.
+                <br />
+                {activeDisplayMode === 'image' && (
+                    <>
+                    Please check paths like: <code>{imagePathHint}</code>.
+                    </>
+                )}
+                {activeDisplayMode === 'text' && "Ensure flashcard data includes text entries for this selection."}
             </p>
           </CardContent>
         </Card>
@@ -231,13 +246,13 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden pt-16 md:pt-24 relative"> {/* Adjusted top padding */}
+    <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden pt-16 md:pt-24 relative">
       <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-20 bg-background/80 backdrop-blur-sm">
-          <Button onClick={toggleTabsVisibility} variant="outline" size="icon" aria-label={showTabs ? "Hide Categories & Sets" : "Show Categories & Sets"} className="shadow-md">
+          <Button onClick={toggleTabsVisibility} variant="outline" size="icon" aria-label={showTabs ? "Hide Controls" : "Show Controls"} className="shadow-md">
             {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
           </Button>
       </div>
-      <div className="fixed top-12 md:top-16 left-0 right-0 z-10 bg-background/80 backdrop-blur-sm"> {/* Container for tabs */}
+      <div className="fixed top-12 md:top-16 left-0 right-0 z-10 bg-background/80 backdrop-blur-sm flex flex-col"> {/* Container for all tabs */}
         {showTabs && uniqueCategories.length > 0 && (
           <CategoryTabs
             categories={uniqueCategories}
@@ -252,10 +267,19 @@ export default function Home() {
             onSetChange={handleSetChange}
           />
         )}
+        {/* DisplayModeTabs: Show if a category is active, AND ( (it has sets AND a set is active) OR it has no sets at all ) */}
+        {showTabs && activeCategory && 
+          ( (availableSets.length > 0 && activeSet) || availableSets.length === 0 ) && (
+          <DisplayModeTabs
+            activeDisplayMode={activeDisplayMode}
+            onDisplayModeChange={handleDisplayModeChange}
+          />
+        )}
       </div>
       
-      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mt-8 md:mt-12 mb-[80px] sm:mb-[100px]"> {/* Added margin-top and margin-bottom */}
-        {displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
+      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mt-16 md:mt-24 mb-[80px] sm:mb-[100px]"> {/* Adjusted top margin to account for potentially three rows of tabs */}
+        {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
+        {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
           <FlashcardImage flashcard={displayedFlashcards[currentIndex]} />
         )}
       </div>
