@@ -10,105 +10,106 @@ export interface Flashcard {
   aiHint?: string; // Optional, more relevant for image type
 }
 
-const originalFlashcards: Omit<Flashcard, 'type'> & { displayText: string; imageUrl: string; altText: string; aiHint: string }[] = [
+// This array will be used to derive both image and text flashcards.
+const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; displayText: string; imageUrl: string; altText: string; aiHint: string }[] = [
   // Fruit category - Set 1
   {
-    id: 'fruit-set1-0',
-    altText: 'A flashcard image of an apple.',
-    imageUrl: '/fruit/set1/0.jpg',
-    aiHint: 'fruit',
+    baseId: 'fruit-set1-apple',
+    altText: 'A flashcard image of a red apple.',
+    imageUrl: '/fruit/set1/0.png', // Assuming 0.png is the apple as per user description
+    aiHint: 'apple',
     category: 'fruit',
     set: 'set1',
     displayText: 'Apple',
   },
   {
-    id: 'fruit-set1-1',
+    baseId: 'fruit-set1-banana',
     altText: 'A flashcard image of a banana.',
     imageUrl: '/fruit/set1/1.jpg',
-    aiHint: 'fruit',
+    aiHint: 'banana',
     category: 'fruit',
     set: 'set1',
     displayText: 'Banana',
   },
   {
-    id: 'fruit-set1-2',
+    baseId: 'fruit-set1-orange',
     altText: 'A flashcard image of an orange.',
     imageUrl: '/fruit/set1/2.jpg',
-    aiHint: 'fruit',
+    aiHint: 'orange',
     category: 'fruit',
     set: 'set1',
     displayText: 'Orange',
   },
   {
-    id: 'fruit-set1-3',
+    baseId: 'fruit-set1-grapes',
     altText: 'A flashcard image of grapes.',
     imageUrl: '/fruit/set1/3.jpeg',
-    aiHint: 'fruit',
+    aiHint: 'grapes',
     category: 'fruit',
     set: 'set1',
     displayText: 'Grapes',
   },
   {
-    id: 'fruit-set1-4',
+    baseId: 'fruit-set1-strawberry',
     altText: 'A flashcard image of a strawberry.',
     imageUrl: '/fruit/set1/4.png',
-    aiHint: 'fruit',
+    aiHint: 'strawberry',
     category: 'fruit',
     set: 'set1',
     displayText: 'Strawberry',
   },
   // Fruit category - Set 2
   {
-    id: 'fruit-set2-0',
+    baseId: 'fruit-set2-pear',
     altText: 'A flashcard image of a pear.',
-    imageUrl: '/fruit/set2/6.jpg',
-    aiHint: 'fruit',
+    imageUrl: '/fruit/set2/6.jpg', // Placeholder name, actual image files should be named descriptively e.g. pear.jpg
+    aiHint: 'pear',
     category: 'fruit',
     set: 'set2',
     displayText: 'Pear',
   },
   {
-    id: 'fruit-set2-1',
+    baseId: 'fruit-set2-mango',
     altText: 'A flashcard image of a mango.',
-    imageUrl: '/fruit/set2/7.jpg',
-    aiHint: 'fruit',
+    imageUrl: '/fruit/set2/7.jpg', // Placeholder name
+    aiHint: 'mango',
     category: 'fruit',
     set: 'set2',
     displayText: 'Mango',
   },
   {
-    id: 'fruit-set2-2',
+    baseId: 'fruit-set2-pineapple',
     altText: 'A flashcard image of a pineapple.',
-    imageUrl: '/fruit/set2/8.jpg',
-    aiHint: 'fruit',
+    imageUrl: '/fruit/set2/8.jpg', // Placeholder name
+    aiHint: 'pineapple',
     category: 'fruit',
     set: 'set2',
     displayText: 'Pineapple',
   },
   {
-    id: 'fruit-set2-3',
+    baseId: 'fruit-set2-kiwi',
     altText: 'A flashcard image of a kiwi.',
-    imageUrl: '/fruit/set2/9.jpg',
-    aiHint: 'fruit',
+    imageUrl: '/fruit/set2/9.jpg', // Placeholder name
+    aiHint: 'kiwi',
     category: 'fruit',
     set: 'set2',
     displayText: 'Kiwi',
   },
   {
-    id: 'fruit-set2-4',
+    baseId: 'fruit-set2-watermelon',
     altText: 'A flashcard image of a watermelon.',
-    imageUrl: '/fruit/set2/10.jpg',
-    aiHint: 'fruit',
+    imageUrl: '/fruit/set2/10.jpg', // Placeholder name
+    aiHint: 'watermelon',
     category: 'fruit',
     set: 'set2',
     displayText: 'Watermelon',
   },
   // Fruit category - Set 3
   {
-    id: 'fruit-set3-0',
+    baseId: 'fruit-set3-cherries',
     altText: 'A flashcard image of cherries.',
-    imageUrl: '/fruit/set3/0.jpg',
-    aiHint: 'fruit',
+    imageUrl: '/fruit/set3/0.jpg', // Placeholder name
+    aiHint: 'cherries',
     category: 'fruit',
     set: 'set3',
     displayText: 'Cherries',
@@ -116,46 +117,46 @@ const originalFlashcards: Omit<Flashcard, 'type'> & { displayText: string; image
 
   // Vegetable category - Set 1
   {
-    id: 'vegetable-set1-0',
+    baseId: 'vegetable-set1-carrots',
     altText: 'A flashcard image of carrots.',
     imageUrl: '/vegetable/set1/carrots.jpg',
-    aiHint: 'vegetable',
+    aiHint: 'carrots',
     category: 'vegetable',
     set: 'set1',
     displayText: 'Carrots',
   },
   {
-    id: 'vegetable-set1-1',
+    baseId: 'vegetable-set1-beetroot',
     altText: 'A flashcard image of beetroot.',
     imageUrl: '/vegetable/set1/beetroot.jpg',
-    aiHint: 'vegetable',
+    aiHint: 'beetroot',
     category: 'vegetable',
     set: 'set1',
     displayText: 'Beetroot',
   },
   {
-    id: 'vegetable-set1-2',
+    baseId: 'vegetable-set1-capsicum',
     altText: 'A flashcard image of capsicum.',
     imageUrl: '/vegetable/set1/capsicum.jpg',
-    aiHint: 'vegetable',
+    aiHint: 'capsicum',
     category: 'vegetable',
     set: 'set1',
     displayText: 'Capsicum',
   },
   {
-    id: 'vegetable-set1-3',
+    baseId: 'vegetable-set1-eggplant',
     altText: 'A flashcard image of eggplant.',
     imageUrl: '/vegetable/set1/eggplant.jpg',
-    aiHint: 'vegetable',
+    aiHint: 'eggplant',
     category: 'vegetable',
     set: 'set1',
     displayText: 'Eggplant',
   },
   {
-    id: 'vegetable-set1-4',
+    baseId: 'vegetable-set1-cucumbers',
     altText: 'A flashcard image of cucumbers.',
     imageUrl: '/vegetable/set1/cucumbers.jpg',
-    aiHint: 'vegetable',
+    aiHint: 'cucumbers',
     category: 'vegetable',
     set: 'set1',
     displayText: 'Cucumbers',
@@ -163,122 +164,262 @@ const originalFlashcards: Omit<Flashcard, 'type'> & { displayText: string; image
 
   // Astrology category - Set 1
   {
-    id: 'astrology-set1-0',
-    altText: 'A flashcard image from the astrology category.',
-    imageUrl: '/astrology/set1/0.jpg',
-    aiHint: 'astrology symbol',
+    baseId: 'astrology-set1-aries',
+    altText: 'A flashcard image of the Aries zodiac symbol.',
+    imageUrl: '/astrology/set1/0.jpg', // Placeholder
+    aiHint: 'Aries symbol',
     category: 'astrology',
     set: 'set1',
     displayText: 'Aries',
   },
   {
-    id: 'astrology-set1-1',
-    altText: 'A flashcard image from the astrology category.',
-    imageUrl: '/astrology/set1/1.jpg',
-    aiHint: 'astrology symbol',
+    baseId: 'astrology-set1-taurus',
+    altText: 'A flashcard image of the Taurus zodiac symbol.',
+    imageUrl: '/astrology/set1/1.jpg', // Placeholder
+    aiHint: 'Taurus symbol',
     category: 'astrology',
     set: 'set1',
     displayText: 'Taurus',
   },
+  // ... add more astrology signs for set 1 to reach 5 items
+  {
+    baseId: 'astrology-set1-gemini',
+    altText: 'A flashcard image of the Gemini zodiac symbol.',
+    imageUrl: '/astrology/set1/2.jpg', // Placeholder
+    aiHint: 'Gemini symbol',
+    category: 'astrology',
+    set: 'set1',
+    displayText: 'Gemini',
+  },
+  {
+    baseId: 'astrology-set1-cancer',
+    altText: 'A flashcard image of the Cancer zodiac symbol.',
+    imageUrl: '/astrology/set1/3.jpg', // Placeholder
+    aiHint: 'Cancer symbol',
+    category: 'astrology',
+    set: 'set1',
+    displayText: 'Cancer',
+  },
+  {
+    baseId: 'astrology-set1-leo',
+    altText: 'A flashcard image of the Leo zodiac symbol.',
+    imageUrl: '/astrology/set1/4.jpg', // Placeholder
+    aiHint: 'Leo symbol',
+    category: 'astrology',
+    set: 'set1',
+    displayText: 'Leo',
+  },
+
 
   // AI/ML category - Set 1
   {
-    id: 'ai-ml-set1-0',
-    altText: 'A flashcard image from the ai-ml category.',
-    imageUrl: '/ai-ml/set1/0.jpg',
+    baseId: 'ai-ml-set1-robot',
+    altText: 'A flashcard image of a friendly robot.',
+    imageUrl: '/ai-ml/set1/0.jpg', // Placeholder
     aiHint: 'robot',
     category: 'ai-ml',
     set: 'set1',
     displayText: 'Robot',
   },
   {
-    id: 'ai-ml-set1-1',
-    altText: 'A flashcard image from the ai-ml category.',
-    imageUrl: '/ai-ml/set1/1.jpg',
-    aiHint: 'neural network',
+    baseId: 'ai-ml-set1-algorithm',
+    altText: 'A flashcard image representing a simple algorithm flowchart.',
+    imageUrl: '/ai-ml/set1/1.jpg', // Placeholder
+    aiHint: 'algorithm flowchart',
     category: 'ai-ml',
     set: 'set1',
     displayText: 'Algorithm',
   },
+  {
+    baseId: 'ai-ml-set1-neuralnetwork',
+    altText: 'A flashcard image of a neural network diagram.',
+    imageUrl: '/ai-ml/set1/2.jpg', // Placeholder
+    aiHint: 'neural network',
+    category: 'ai-ml',
+    set: 'set1',
+    displayText: 'Neural Network',
+  },
+  {
+    baseId: 'ai-ml-set1-datacenter',
+    altText: 'A flashcard image of a server rack in a data center.',
+    imageUrl: '/ai-ml/set1/3.jpg', // Placeholder
+    aiHint: 'data center server',
+    category: 'ai-ml',
+    set: 'set1',
+    displayText: 'Data',
+  },
+  {
+    baseId: 'ai-ml-set1-chip',
+    altText: 'A flashcard image of a computer chip.',
+    imageUrl: '/ai-ml/set1/4.jpg', // Placeholder
+    aiHint: 'computer chip',
+    category: 'ai-ml',
+    set: 'set1',
+    displayText: 'Processor',
+  },
 
   // Chess category - Set 1
   {
-    id: 'chess-set1-0',
-    altText: 'A flashcard image from the chess category.',
-    imageUrl: '/chess/set1/0.jpg',
-    aiHint: 'chess piece',
+    baseId: 'chess-set1-king',
+    altText: 'A flashcard image of a chess king piece.',
+    imageUrl: '/chess/set1/0.jpg', // Placeholder
+    aiHint: 'chess king',
     category: 'chess',
     set: 'set1',
     displayText: 'King',
   },
   {
-    id: 'chess-set1-1',
-    altText: 'A flashcard image from the chess category.',
-    imageUrl: '/chess/set1/1.jpg',
-    aiHint: 'chess piece',
+    baseId: 'chess-set1-queen',
+    altText: 'A flashcard image of a chess queen piece.',
+    imageUrl: '/chess/set1/1.jpg', // Placeholder
+    aiHint: 'chess queen',
     category: 'chess',
     set: 'set1',
     displayText: 'Queen',
   },
+  {
+    baseId: 'chess-set1-rook',
+    altText: 'A flashcard image of a chess rook piece.',
+    imageUrl: '/chess/set1/2.jpg', // Placeholder
+    aiHint: 'chess rook',
+    category: 'chess',
+    set: 'set1',
+    displayText: 'Rook',
+  },
+  {
+    baseId: 'chess-set1-bishop',
+    altText: 'A flashcard image of a chess bishop piece.',
+    imageUrl: '/chess/set1/3.jpg', // Placeholder
+    aiHint: 'chess bishop',
+    category: 'chess',
+    set: 'set1',
+    displayText: 'Bishop',
+  },
+  {
+    baseId: 'chess-set1-knight',
+    altText: 'A flashcard image of a chess knight piece.',
+    imageUrl: '/chess/set1/4.jpg', // Placeholder
+    aiHint: 'chess knight',
+    category: 'chess',
+    set: 'set1',
+    displayText: 'Knight',
+  },
+  // Note: Pawn could be in a second set for chess pieces.
 
   // Transport category - Set 1
   {
-    id: 'transport-set1-0',
-    altText: 'A flashcard image from the transport category.',
-    imageUrl: '/transport/set1/0.jpg',
-    aiHint: 'vehicle',
+    baseId: 'transport-set1-car',
+    altText: 'A flashcard image of a red car.',
+    imageUrl: '/transport/set1/0.jpg', // Placeholder
+    aiHint: 'red car',
     category: 'transport',
     set: 'set1',
     displayText: 'Car',
   },
   {
-    id: 'transport-set1-1',
-    altText: 'A flashcard image from the transport category.',
-    imageUrl: '/transport/set1/1.jpg',
-    aiHint: 'vehicle',
+    baseId: 'transport-set1-bus',
+    altText: 'A flashcard image of a yellow school bus.',
+    imageUrl: '/transport/set1/1.jpg', // Placeholder
+    aiHint: 'school bus',
     category: 'transport',
     set: 'set1',
     displayText: 'Bus',
   },
+  {
+    baseId: 'transport-set1-train',
+    altText: 'A flashcard image of a passenger train.',
+    imageUrl: '/transport/set1/2.jpg', // Placeholder
+    aiHint: 'train',
+    category: 'transport',
+    set: 'set1',
+    displayText: 'Train',
+  },
+  {
+    baseId: 'transport-set1-airplane',
+    altText: 'A flashcard image of an airplane.',
+    imageUrl: '/transport/set1/3.jpg', // Placeholder
+    aiHint: 'airplane',
+    category: 'transport',
+    set: 'set1',
+    displayText: 'Airplane',
+  },
+  {
+    baseId: 'transport-set1-bicycle',
+    altText: 'A flashcard image of a bicycle.',
+    imageUrl: '/transport/set1/4.jpg', // Placeholder
+    aiHint: 'bicycle',
+    category: 'transport',
+    set: 'set1',
+    displayText: 'Bicycle',
+  },
+
 
   // Space category - Set 1
   {
-    id: 'space-set1-0',
-    altText: 'A flashcard image from the space category.',
-    imageUrl: '/space/set1/0.jpg',
-    aiHint: 'planet',
+    baseId: 'space-set1-earth',
+    altText: 'A flashcard image of planet Earth.',
+    imageUrl: '/space/set1/0.jpg', // Placeholder
+    aiHint: 'planet earth',
     category: 'space',
     set: 'set1',
     displayText: 'Earth',
   },
   {
-    id: 'space-set1-1',
-    altText: 'A flashcard image from the space category.',
-    imageUrl: '/space/set1/1.jpg',
-    aiHint: 'celestial body',
+    baseId: 'space-set1-moon',
+    altText: "A flashcard image of Earth's moon.",
+    imageUrl: '/space/set1/1.jpg', // Placeholder
+    aiHint: 'moon',
     category: 'space',
     set: 'set1',
     displayText: 'Moon',
   },
+  {
+    baseId: 'space-set1-sun',
+    altText: 'A flashcard image of the Sun.',
+    imageUrl: '/space/set1/2.jpg', // Placeholder
+    aiHint: 'sun star',
+    category: 'space',
+    set: 'set1',
+    displayText: 'Sun',
+  },
+  {
+    baseId: 'space-set1-mars',
+    altText: 'A flashcard image of planet Mars.',
+    imageUrl: '/space/set1/3.jpg', // Placeholder
+    aiHint: 'planet mars',
+    category: 'space',
+    set: 'set1',
+    displayText: 'Mars',
+  },
+  {
+    baseId: 'space-set1-stars',
+    altText: 'A flashcard image of a starry night sky.',
+    imageUrl: '/space/set1/4.jpg', // Placeholder
+    aiHint: 'stars night sky',
+    category: 'space',
+    set: 'set1',
+    displayText: 'Stars',
+  },
+
 ];
 
-export const flashcards: Flashcard[] = originalFlashcards.reduce((acc: Flashcard[], card) => {
+export const flashcards: Flashcard[] = baseFlashcards.reduce((acc: Flashcard[], card) => {
   // Add image card
   acc.push({
-    id: card.id,
+    id: `${card.baseId}-image`, // Ensure unique ID for image card
     altText: card.altText,
     imageUrl: card.imageUrl,
     aiHint: card.aiHint,
     category: card.category,
     set: card.set,
     type: 'image',
-    displayText: undefined, // Image cards do not display text directly
+    displayText: undefined, 
   });
 
   // Add text card
   if (card.displayText) {
     acc.push({
-      id: `${card.id}-text`,
+      id: `${card.baseId}-text`, // Ensure unique ID for text card
       displayText: card.displayText,
       category: card.category,
       set: card.set,
