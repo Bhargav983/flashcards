@@ -8,9 +8,10 @@ interface FlashcardImageProps {
   flashcard: Flashcard;
   zoomLevel?: number;
   imageRotation?: number; 
+  animationClass?: string;
 }
 
-export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0 }: FlashcardImageProps) {
+export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, animationClass = '' }: FlashcardImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [errorOccurred, setErrorOccurred] = useState(false);
   const { imageUrl, altText, aiHint, displayText, id, type } = flashcard;
@@ -20,17 +21,12 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0 }: 
       setIsLoading(true);
       setErrorOccurred(false);
       
-      // Basic validation for imageUrl - only structural, not existence.
-      // For local public assets, this doesn't fully validate path correctness.
       try {
-        // Check if it's a relative path starting with / or an absolute URL
         if (!imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
             // console.warn(`Potentially malformed image URL: ${imageUrl}. Should be relative from public or absolute.`);
         }
       } catch (e) {
-        // This catch block might not be hit for typical string path errors
         // console.error(`Error constructing URL for image: ${imageUrl}`, e);
-        // setErrorOccurred(true); // Consider if this should set error
       }
 
     } else {
@@ -69,8 +65,12 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0 }: 
       className="flex flex-col items-center justify-center w-full h-full animate-fadeIn overflow-hidden group"
     >
       <div 
-        className="relative w-[70vw] h-[70vh] flex items-center justify-center transition-transform duration-300 ease-out group-hover:scale-105"
-        style={{ transform: `scale(${zoomLevel}) rotate(${imageRotation}deg)` }}
+        className={`relative w-full h-full flex items-center justify-center transition-transform duration-300 ease-out group-hover:scale-[1.02] ${animationClass}`}
+        style={{
+          '--zoom-level': zoomLevel,
+          '--image-rotation': `${imageRotation}deg`,
+           transform: `scale(var(--zoom-level)) rotate(var(--image-rotation))`,
+        } as React.CSSProperties}
       >
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">

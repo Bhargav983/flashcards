@@ -10,6 +10,7 @@ import { CategoryTabs } from '@/components/category-tabs';
 import { SetTabs } from '@/components/set-tabs';
 import { DisplayModeTabs } from '@/components/display-mode-tabs';
 import { ZoomControls } from '@/components/zoom-controls';
+import { AnimationControls } from '@/components/animation-controls'; // Added AnimationControls
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, PanelTopOpen, PanelTopClose } from 'lucide-react';
@@ -34,6 +35,8 @@ export default function Home() {
   const [showTabs, setShowTabs] = useState(true);
   const [imageZoom, setImageZoom] = useState(1);
   const [imageRotation, setImageRotation] = useState(0);
+  const [activeAnimation, setActiveAnimation] = useState<string>('');
+
 
   const uniqueCategories = useMemo(() => {
     const categories = new Set(allFlashcards.map(fc => fc.category.toLowerCase()));
@@ -48,15 +51,26 @@ export default function Home() {
   }, []);
 
   const handleZoomIn = useCallback(() => {
+    setActiveAnimation(''); // Clear animation on zoom
     setImageZoom(prevZoom => Math.min(prevZoom + 0.1, 3));
   }, []);
 
   const handleZoomOut = useCallback(() => {
+    setActiveAnimation(''); // Clear animation on zoom
     setImageZoom(prevZoom => Math.max(prevZoom - 0.1, 0.5));
   }, []);
 
   const handleRotateImage = useCallback(() => {
+    setActiveAnimation(''); // Clear animation on rotate
     setImageRotation(prevRotation => (prevRotation + 90) % 360);
+  }, []);
+
+  const handleAnimate = useCallback((animationType: string) => {
+    setActiveAnimation('');
+    // Timeout to allow the class to be removed and re-added, ensuring animation re-triggers
+    setTimeout(() => {
+      setActiveAnimation(animationType);
+    }, 50);
   }, []);
 
 
@@ -122,7 +136,8 @@ export default function Home() {
     setDisplayedFlashcards(cardsToDisplay);
     setCurrentIndex(0);
     setImageZoom(1);
-    setImageRotation(0); // Reset rotation on card change
+    setImageRotation(0); 
+    setActiveAnimation(''); // Reset animation on card change
     setIsLoading(false);
   }, [activeCategory, activeSet, allFlashcards, availableSets, activeDisplayMode]);
 
@@ -142,10 +157,12 @@ export default function Home() {
 
   const goToPrevious = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : displayedFlashcards.length - 1));
+    setActiveAnimation('');
   }, [displayedFlashcards.length]);
 
   const goToNext = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex < displayedFlashcards.length - 1 ? prevIndex + 1 : 0));
+    setActiveAnimation('');
   }, [displayedFlashcards.length]);
 
   useEffect(() => {
@@ -171,7 +188,7 @@ export default function Home() {
       if (e.key === 'ArrowLeft') goToPrevious();
       if (e.key === '+' || e.key === '=') handleZoomIn();
       if (e.key === '-' || e.key === '_') handleZoomOut();
-      if (e.key === 'r' || e.key === 'R') handleRotateImage(); // Added keyboard shortcut for rotation
+      if (e.key === 'r' || e.key === 'R') handleRotateImage();
     };
 
     window.addEventListener('touchstart', handleTouchStart);
@@ -213,11 +230,12 @@ export default function Home() {
         <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
            <div className="flex items-center w-full px-2 sm:px-4 py-2" style={{height: controlButtonRowHeight}}>
             <div className="flex-grow">
-                 {showTabs && uniqueCategories.length > 0 && (
+                 {uniqueCategories.length > 0 && (
                   <CategoryTabs
                     categories={uniqueCategories}
                     activeCategory={activeCategory}
                     onCategoryChange={handleCategoryChange}
+                    isVisible={showTabs}
                   />
                 )}
             </div> 
@@ -260,11 +278,12 @@ export default function Home() {
         <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
           <div className="flex items-center w-full px-2 sm:px-4 py-2" style={{height: controlButtonRowHeight}}>
             <div className="flex-grow">
-             {showTabs && uniqueCategories.length > 0 && (
+             {uniqueCategories.length > 0 && (
                 <CategoryTabs
                   categories={uniqueCategories}
                   activeCategory={activeCategory}
                   onCategoryChange={handleCategoryChange}
+                  isVisible={showTabs}
                 />
               )}
             </div>
@@ -324,11 +343,12 @@ export default function Home() {
       <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
         <div className="flex items-center w-full px-2 sm:px-4 py-2" style={{height: controlButtonRowHeight}}>
            <div className="flex-grow overflow-x-auto">
-            {showTabs && uniqueCategories.length > 0 && (
+            {uniqueCategories.length > 0 && (
                 <CategoryTabs
                   categories={uniqueCategories}
                   activeCategory={activeCategory}
                   onCategoryChange={handleCategoryChange}
+                  isVisible={showTabs}
                 />
             )}
             </div>
@@ -361,7 +381,7 @@ export default function Home() {
       
       <div 
         className="w-full mx-auto flex-grow flex flex-col items-center justify-center relative px-4"
-        style={commonWrapperStyle}
+        style={{...commonWrapperStyle, height: 'calc(100vh - var(--dynamic-header-height, 6rem) - var(--dynamic-footer-height, 6rem))'}}
       >
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
         {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
@@ -370,14 +390,16 @@ export default function Home() {
               flashcard={displayedFlashcards[currentIndex]} 
               zoomLevel={imageZoom}
               imageRotation={imageRotation}
+              animationClass={activeAnimation}
             />
-            {activeDisplayMode === 'image' && displayedFlashcards[currentIndex].imageUrl && (
-              <div className="absolute bottom-48 right-4 z-30 flex flex-col space-y-2 md:bottom-48 md:right-8">
+             {activeDisplayMode === 'image' && displayedFlashcards[currentIndex].imageUrl && (
+              <div className="absolute bottom-28 right-4 z-30 flex flex-col space-y-2 md:bottom-32 md:right-8">
                 <ZoomControls 
                   onZoomIn={handleZoomIn} 
                   onZoomOut={handleZoomOut}
                   onRotate={handleRotateImage} 
                 />
+                <AnimationControls onAnimate={handleAnimate} />
               </div>
             )}
           </>
@@ -393,7 +415,12 @@ export default function Home() {
             />
         </div>
       )}
+      <style jsx global>{`
+        body {
+          --dynamic-header-height: ${controlButtonRowHeight} + ${headerApproxHeight};
+          --dynamic-footer-height: ${footerApproxHeight};
+        }
+      `}</style>
     </main>
   );
 }
-
