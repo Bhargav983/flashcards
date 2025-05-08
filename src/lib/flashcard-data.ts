@@ -64,7 +64,7 @@ export const flashcards: Flashcard[] = [
   {
     id: 'fruit-set2-0', // Was fruit/5.jpg
     altText: 'A flashcard image from the fruit category.',
-    imageUrl: '/fruit/set2/0.jpg',
+    imageUrl: '/fruit/set2/6.jpg',
     aiHint: 'fruit',
     category: 'fruit',
     set: 'set2',
@@ -72,7 +72,7 @@ export const flashcards: Flashcard[] = [
   {
     id: 'fruit-set2-1', // Was fruit/6.jpg
     altText: 'A flashcard image from the fruit category.',
-    imageUrl: '/fruit/set2/1.jpg',
+    imageUrl: '/fruit/set2/7.jpg',
     aiHint: 'fruit',
     category: 'fruit',
     set: 'set2',
@@ -80,7 +80,7 @@ export const flashcards: Flashcard[] = [
   {
     id: 'fruit-set2-2', // Was fruit/7.jpg
     altText: 'A flashcard image from the fruit category.',
-    imageUrl: '/fruit/set2/2.jpg',
+    imageUrl: '/fruit/set2/8.jpg',
     aiHint: 'fruit',
     category: 'fruit',
     set: 'set2',
@@ -88,7 +88,7 @@ export const flashcards: Flashcard[] = [
   {
     id: 'fruit-set2-3', // Was fruit/8.jpg
     altText: 'A flashcard image from the fruit category.',
-    imageUrl: '/fruit/set2/3.jpg',
+    imageUrl: '/fruit/set2/9.jpg',
     aiHint: 'fruit',
     category: 'fruit',
     set: 'set2',
@@ -96,7 +96,7 @@ export const flashcards: Flashcard[] = [
   {
     id: 'fruit-set2-4', // Was fruit/9.jpg
     altText: 'A flashcard image from the fruit category.',
-    imageUrl: '/fruit/set2/4.jpg',
+    imageUrl: '/fruit/set2/10.jpg',
     aiHint: 'fruit',
     category: 'fruit',
     set: 'set2',
@@ -116,7 +116,7 @@ export const flashcards: Flashcard[] = [
   {
     id: 'vegetable-set1-0',
     altText: 'A flashcard image from the vegetable category.',
-    imageUrl: '/vegetable/set1/0.jpg',
+    imageUrl: '/vegetable/set1/carrots.jpg',
     aiHint: 'vegetable',
     category: 'vegetable',
     set: 'set1',
@@ -124,7 +124,7 @@ export const flashcards: Flashcard[] = [
   {
     id: 'vegetable-set1-1',
     altText: 'A flashcard image from the vegetable category.',
-    imageUrl: '/vegetable/set1/1.jpg',
+    imageUrl: '/vegetable/set1/beetroot.jpg',
     aiHint: 'vegetable',
     category: 'vegetable',
     set: 'set1',
@@ -132,7 +132,23 @@ export const flashcards: Flashcard[] = [
   {
     id: 'vegetable-set1-2',
     altText: 'A flashcard image from the vegetable category.',
-    imageUrl: '/vegetable/set1/2.jpg',
+    imageUrl: '/vegetable/set1/capsicum.jpg',
+    aiHint: 'vegetable',
+    category: 'vegetable',
+    set: 'set1',
+  },
+  {
+    id: 'vegetable-set1-2',
+    altText: 'A flashcard image from the vegetable category.',
+    imageUrl: '/vegetable/set1/eggplant.jpg',
+    aiHint: 'vegetable',
+    category: 'vegetable',
+    set: 'set1',
+  },
+  {
+    id: 'vegetable-set1-2',
+    altText: 'A flashcard image from the vegetable category.',
+    imageUrl: '/vegetable/set1/cucumbers.jpg',
     aiHint: 'vegetable',
     category: 'vegetable',
     set: 'set1',
