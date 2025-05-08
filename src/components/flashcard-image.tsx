@@ -52,21 +52,23 @@ export function FlashcardImage({
   };
 
   const getAnimationTarget = () => {
-    const baseTarget = {
+    const baseTarget = { // Base properties for animations
       scale: zoomLevel,
       rotate: imageRotation,
       y: 0,
+      x: 0,
       opacity: 1,
-      transition: { duration: 0.3, ease: "easeOut" } // Smooth transition for prop changes
+      filter: 'none',
+      // Default transition for prop changes, individual animations will override
+      transition: { duration: 0.3, ease: "easeOut" } 
     };
 
     switch (animationType) {
       case 'jump-image':
         return {
+          ...baseTarget,
           y: [0, -30, 0], 
           scale: [zoomLevel, zoomLevel * 1.1, zoomLevel],
-          rotate: imageRotation, 
-          opacity: 1,
           transition: { duration: 0.5, ease: "easeInOut", times: [0, 0.5, 1] },
         };
       case 'spin-image-once':
@@ -77,31 +79,96 @@ export function FlashcardImage({
         };
       case 'pop-image':
         return {
+          ...baseTarget,
           scale: [zoomLevel, zoomLevel * 1.2, zoomLevel],
-          rotate: imageRotation,
-          y:0,
-          opacity: 1,
           transition: { duration: 0.4, ease: "easeInOut" },
         };
       case 'float-image':
         return {
           ...baseTarget,
-          y: -50, 
-          opacity: 0.3,
-          transition: { duration: 1.5, ease: "easeInOut" },
+          y: [0, -50, 0], 
+          opacity: [1, 0.7, 1],
+          transition: { duration: 1.5, ease: "easeInOut", times: [0, 0.5, 1] },
         };
-      case 'color-shift-image': // Handled by CSS for now
-        return baseTarget;
-      default:
-        return baseTarget; 
+      case 'color-shift-image':
+        return {
+          ...baseTarget,
+          filter: ["hue-rotate(0deg)", "hue-rotate(360deg)", "hue-rotate(0deg)"],
+          transition: { duration: 2, ease: "linear", times: [0, 0.5, 1] },
+        };
+      // New Advanced Animations
+      case 'shake-image':
+        return {
+          ...baseTarget,
+          x: [0, -10, 10, -7, 7, -3, 3, 0],
+          transition: { duration: 0.5, ease: "easeInOut" },
+        };
+      case 'dance-image':
+        return {
+          ...baseTarget,
+          rotate: [imageRotation, imageRotation - 10, imageRotation + 10, imageRotation - 5, imageRotation + 5, imageRotation],
+          scale: [zoomLevel, zoomLevel * 1.05, zoomLevel * 0.95, zoomLevel * 1.05, zoomLevel * 0.95, zoomLevel],
+          transition: { duration: 0.8, ease: "easeInOut" },
+        };
+      case 'twinkle-image':
+        return {
+          ...baseTarget,
+          opacity: [1, 0.4, 1, 0.4, 1, 0.4, 1],
+          scale: [zoomLevel, zoomLevel * 1.03, zoomLevel, zoomLevel * 1.03, zoomLevel, zoomLevel * 1.03, zoomLevel],
+          transition: { duration: 1.0, ease: "easeInOut" },
+        };
+      case 'blast-off-image':
+        return {
+          ...baseTarget,
+          y: [0, -350],
+          opacity: [1, 0],
+          scale: [zoomLevel, zoomLevel * 0.4],
+          transition: { duration: 0.7, ease: "easeIn" },
+        };
+      case 'freeze-image':
+        return {
+          ...baseTarget,
+          filter: ["none", "saturate(20%) sepia(50%) hue-rotate(180deg) brightness(1.2) contrast(0.8)", "none"],
+          transition: { duration: 1.5, ease: "easeInOut", times: [0, 0.5, 1] },
+        };
+      case 'boom-image':
+        return {
+          ...baseTarget,
+          scale: [zoomLevel, zoomLevel * 2.2, zoomLevel * 0.2, zoomLevel * 0.2], // Hold small before fade
+          opacity: [1, 0.8, 0.3, 0],
+          rotate: [imageRotation, imageRotation + 8, imageRotation - 8, imageRotation + 4, imageRotation - 4, imageRotation],
+          transition: { duration: 0.7, ease: "easeOut" },
+        };
+      case 'peekaboo-image':
+        return {
+          ...baseTarget,
+          opacity: [1, 0.1, 1],
+          scale: [zoomLevel, zoomLevel * 0.8, zoomLevel],
+          transition: { duration: 1.2, ease:"easeInOut", times: [0, 0.5, 1] },
+        };
+      case 'magic-image':
+        return {
+          ...baseTarget,
+          rotate: [imageRotation, imageRotation + 180, imageRotation + 360],
+          scale: [zoomLevel, zoomLevel * 0.6, zoomLevel, zoomLevel * 1.3, zoomLevel],
+          filter: ["none", "hue-rotate(120deg) saturate(250%)", "hue-rotate(240deg) saturate(200%)", "hue-rotate(360deg) saturate(150%)", "none"],
+          transition: { duration: 1.5, ease: "circOut" },
+        };
+      default: // No animation or prop change (zoom/rotate)
+        return {
+            scale: zoomLevel,
+            rotate: imageRotation,
+            y: 0,
+            x: 0,
+            opacity: 1,
+            filter: 'none',
+            transition: { duration: 0.3, ease: "easeOut" }
+        };
     }
   };
 
   const animationProps = getAnimationTarget();
   
-  const imageDynamicClassName = animationType === 'color-shift-image' ? 'animate-color-shift-image' : '';
-
-
   if (type === 'text') {
     return (
       <div className="flex flex-col items-center justify-center w-full animate-fadeIn h-full p-4">
@@ -120,11 +187,11 @@ export function FlashcardImage({
       className="flex flex-col items-center justify-center w-full h-full animate-fadeIn overflow-hidden group"
     >
       <motion.div 
-        key={`${id}-${internalAnimationKey}`}
+        key={`${id}-${internalAnimationKey}`} // Change key to re-trigger animation from initial state
         className="relative w-full h-full flex items-center justify-center"
-        initial={{ scale: zoomLevel, rotate: imageRotation, y: 0, opacity: 1 }}
+        initial={{ scale: zoomLevel, rotate: imageRotation, y: 0, x: 0, opacity: 1, filter: 'none' }}
         animate={animationProps}
-        whileHover={!animationType ? { scale: zoomLevel * 1.02 } : {}} // Apply hover zoom only if no active animation
+        whileHover={!animationType && zoomLevel === 1 && imageRotation === 0 ? { scale: 1.05 } : {}}
       >
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
@@ -140,7 +207,7 @@ export function FlashcardImage({
         )}
         {imageUrl && altText && (
           <Image
-            key={`${id}-img`}
+            key={`${id}-img`} // Keep image key stable unless src changes for Next Image optimization
             src={imageUrl}
             alt={altText}
             fill
@@ -153,7 +220,7 @@ export function FlashcardImage({
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
             onLoad={handleImageLoad} 
             onError={handleImageError}
-            className={imageDynamicClassName}
+            // className is removed as color-shift is now Framer Motion based
           />
         )}
         {!imageUrl && !isLoading && !errorOccurred && type === 'image' && (
@@ -165,3 +232,4 @@ export function FlashcardImage({
     </div>
   );
 }
+

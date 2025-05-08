@@ -11,6 +11,7 @@ import { SetTabs } from '@/components/set-tabs';
 import { DisplayModeTabs } from '@/components/display-mode-tabs';
 import { ZoomControls } from '@/components/zoom-controls';
 import { AnimationControls } from '@/components/animation-controls';
+import { AdvancedAnimationControls } from '@/components/advanced-animation-controls'; // Import new controls
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, PanelTopOpen, PanelTopClose } from 'lucide-react';
@@ -66,16 +67,16 @@ export default function Home() {
   }, []);
 
   const handleAnimate = useCallback((animationType: string) => {
-    // animationType will be like "jump-image", "spin-image-once"
     if (activeAnimation === animationType) {
-      setActiveAnimation('');
+      setActiveAnimation(''); // Clear current animation to allow re-triggering
+      // Use a micro-delay to ensure state update is processed before setting new animation
       setTimeout(() => {
         setActiveAnimation(animationType);
-      }, 50); 
+      }, 10); 
     } else {
       setActiveAnimation(animationType);
     }
-  }, [activeAnimation]); 
+  }, [activeAnimation]);
 
 
   useEffect(() => {
@@ -218,12 +219,12 @@ export default function Home() {
   }, [showTabs, uniqueCategories, availableSets, activeSet, activeCategory]);
 
   const headerApproxHeight = `${headerDynamicHeight}rem`;
-  const footerApproxHeight = displayedFlashcards.length > 1 ? "6rem" : "0rem";
+  const footerApproxHeight = displayedFlashcards.length > 1 ? "6rem" : "0rem"; // Height of navigation controls
 
-
+  // Adjusted commonWrapperStyle for more vertical space for the image
   const commonWrapperStyle = useMemo(() => ({
-    paddingTop: `calc(${controlButtonRowHeight} + ${headerApproxHeight} + 1rem)`, 
-    paddingBottom: `calc(${footerApproxHeight} + 1rem)`,
+    paddingTop: `calc(${controlButtonRowHeight} + ${headerApproxHeight} + 0.5rem)`, 
+    paddingBottom: `calc(${footerApproxHeight} + 0.5rem)`,
   }), [headerApproxHeight, footerApproxHeight, controlButtonRowHeight]);
 
 
@@ -238,7 +239,7 @@ export default function Home() {
                     categories={uniqueCategories}
                     activeCategory={activeCategory}
                     onCategoryChange={handleCategoryChange}
-                    isVisible={showTabs}
+                    isVisible={showTabs} // Pass visibility state
                   />
                 )}
             </div> 
@@ -286,7 +287,7 @@ export default function Home() {
                   categories={uniqueCategories}
                   activeCategory={activeCategory}
                   onCategoryChange={handleCategoryChange}
-                  isVisible={showTabs}
+                  isVisible={showTabs} // Pass visibility state
                 />
               )}
             </div>
@@ -351,7 +352,7 @@ export default function Home() {
                   categories={uniqueCategories}
                   activeCategory={activeCategory}
                   onCategoryChange={handleCategoryChange}
-                  isVisible={showTabs}
+                  isVisible={showTabs} // Pass visibility state
                 />
             )}
             </div>
@@ -396,14 +397,19 @@ export default function Home() {
               animationType={activeAnimation}
             />
              {activeDisplayMode === 'image' && displayedFlashcards[currentIndex].imageUrl && (
-              <div className="absolute bottom-[calc(var(--dynamic-footer-height,6rem)+3rem)] right-4 z-30 flex flex-col space-y-2 md:bottom-[calc(var(--dynamic-footer-height,6rem)+4rem)] md:right-8">
-                <ZoomControls 
-                  onZoomIn={handleZoomIn} 
-                  onZoomOut={handleZoomOut}
-                  onRotate={handleRotateImage} 
-                />
-                <AnimationControls onAnimate={handleAnimate} />
-              </div>
+              <>
+                <div className="absolute bottom-[calc(var(--dynamic-footer-height,6rem)+1rem)] right-4 z-30 flex flex-col space-y-2 md:bottom-[calc(var(--dynamic-footer-height,6rem)+1rem)] md:right-8">
+                  <ZoomControls 
+                    onZoomIn={handleZoomIn} 
+                    onZoomOut={handleZoomOut}
+                    onRotate={handleRotateImage} 
+                  />
+                  <AnimationControls onAnimate={handleAnimate} />
+                </div>
+                <div className="absolute bottom-[calc(var(--dynamic-footer-height,6rem)+1rem)] left-4 z-30 flex flex-col space-y-2 md:bottom-[calc(var(--dynamic-footer-height,6rem)+1rem)] md:left-8">
+                  <AdvancedAnimationControls onAnimate={handleAnimate} />
+                </div>
+              </>
             )}
           </>
         )}

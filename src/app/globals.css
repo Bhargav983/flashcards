@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -127,18 +128,12 @@
     color: hsl(var(--bright-red-text));
   }
 
-  /* Image Animations */
-  /* spin-image-once, jump-image, pop-image, float-image are now handled by Framer Motion */
+  /* Image Animations are now handled by Framer Motion */
+  /* spin-image-once, jump-image, pop-image, float-image, color-shift-image */
   
-  @keyframes color-shift-image-kf {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
-  }
-  .animate-color-shift-image {
-    animation: color-shift-image-kf 2s linear infinite; /* Added infinite to make it loop */
-  }
 }
 
 html {
   scroll-behavior: smooth;
 }
+
