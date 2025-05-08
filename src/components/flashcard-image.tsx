@@ -18,24 +18,9 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
       setIsLoading(true);
       setErrorOccurred(false);
       
-      // Check if imageUrl is a valid string before creating Image object
       if (typeof imageUrl === 'string' && imageUrl.trim() !== '') {
-        const img = new window.Image();
-        img.src = imageUrl; 
-        img.onload = () => {
-          // Check if component is still mounted
-          if (document.getElementById(`flashcard-image-${id}`)) {
-              handleImageLoad();
-          }
-        };
-        img.onerror = () => {
-           // Check if component is still mounted
-          if (document.getElementById(`flashcard-image-${id}`)) {
-              handleImageError();
-          }
-        };
+        // No need to use window.Image preloader if next/image handles onLoad/onError
       } else {
-        // Handle invalid imageUrl
         handleImageError();
       }
 
@@ -54,6 +39,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   const handleImageError = () => {
     setIsLoading(false);
     setErrorOccurred(true);
+    // console.error(`Error loading image: ${imageUrl}`); // Removed console error as per user request earlier
   };
 
   if (type === 'text') {
@@ -71,7 +57,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   // type === 'image'
   return (
     <div id={`flashcard-image-${id}`} className="flex flex-col items-center justify-center w-full animate-fadeIn h-full">
-      <div className="relative w-full h-full flex items-center justify-center p-2 sm:p-4">
+      <div className="relative w-full h-full flex items-center justify-center">
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -81,7 +67,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
         {errorOccurred && !isLoading && (
            <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
             <p className="text-destructive text-lg">Could not load image.</p>
-            <p className="text-muted-foreground text-sm">Please check the image path: {imageUrl}</p>
+            {imageUrl && <p className="text-muted-foreground text-sm">Path: {imageUrl}</p>}
           </div>
         )}
         {imageUrl && altText && (
@@ -90,15 +76,15 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
             src={imageUrl}
             alt={altText}
             fill
-            style={{ visibility: isLoading || errorOccurred ? 'hidden' : 'visible' }}
+            style={{ objectFit: 'contain', visibility: isLoading || errorOccurred ? 'hidden' : 'visible' }}
             priority 
             data-ai-hint={aiHint}
-            sizes="(max-width: 768px) 95vw, (max-width: 1280px) 90vw, 80vw" 
+            sizes="100vw" 
             onLoad={handleImageLoad} 
             onError={handleImageError}
           />
         )}
-        {!imageUrl && !isLoading && !errorOccurred && (
+        {!imageUrl && !isLoading && !errorOccurred && type === 'image' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
                 <p className="text-muted-foreground text-lg">Image not available for this card.</p>
             </div>
