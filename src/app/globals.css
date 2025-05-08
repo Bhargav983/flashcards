@@ -137,11 +137,13 @@
   }
 
   @keyframes jump-image-kf {
-    0%, 100% { transform: translateY(0) scale(var(--zoom-level, 1)) rotate(var(--image-rotation, 0deg)); }
-    50% { transform: translateY(-30px) scale(var(--zoom-level, 1)) rotate(var(--image-rotation, 0deg)); }
+    0% { transform: translateY(0) scale(var(--zoom-level, 1)) rotate(var(--image-rotation, 0deg)); }
+    40% { transform: translateY(-20px) scale(var(--zoom-level, 1)) rotate(var(--image-rotation, 0deg)); } /* Peak of jump */
+    70% { transform: translateY(3px) scale(var(--zoom-level, 1)) rotate(var(--image-rotation, 0deg)); } /* Overshoot slightly downwards (bounce compression) */
+    100% { transform: translateY(0) scale(var(--zoom-level, 1)) rotate(var(--image-rotation, 0deg)); } /* Settle */
   }
   .animate-jump-image {
-    animation: jump-image-kf 0.5s ease-out;
+    animation: jump-image-kf 0.7s ease-in-out; /* Adjusted duration and timing for bounce */
   }
 
   @keyframes pop-image-kf {
@@ -170,4 +172,8 @@
   .animate-float-image {
     animation: float-image-kf 1.5s ease-in-out forwards;
   }
+}
+
+html {
+  scroll-behavior: smooth;
 }
