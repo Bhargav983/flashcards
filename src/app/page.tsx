@@ -9,7 +9,7 @@ import { NavigationControls } from '@/components/navigation-controls';
 import { CategoryTabs } from '@/components/category-tabs';
 import { SetTabs } from '@/components/set-tabs';
 import { DisplayModeTabs } from '@/components/display-mode-tabs';
-import { ZoomControls } from '@/components/zoom-controls'; // Import ZoomControls
+import { ZoomControls } from '@/components/zoom-controls';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, PanelTopOpen, PanelTopClose } from 'lucide-react';
@@ -32,7 +32,7 @@ export default function Home() {
   const [activeDisplayMode, setActiveDisplayMode] = useState<'image' | 'text'>('image');
   
   const [showTabs, setShowTabs] = useState(true);
-  const [imageZoom, setImageZoom] = useState(1); // State for image zoom level
+  const [imageZoom, setImageZoom] = useState(1);
 
   const uniqueCategories = useMemo(() => {
     const categories = new Set(allFlashcards.map(fc => fc.category.toLowerCase()));
@@ -46,13 +46,12 @@ export default function Home() {
     setShowTabs(prevShowTabs => !prevShowTabs);
   }, []);
 
-  // Zoom handlers
   const handleZoomIn = useCallback(() => {
-    setImageZoom(prevZoom => Math.min(prevZoom + 0.1, 3)); // Max zoom 3x
+    setImageZoom(prevZoom => Math.min(prevZoom + 0.1, 3));
   }, []);
 
   const handleZoomOut = useCallback(() => {
-    setImageZoom(prevZoom => Math.max(prevZoom - 0.1, 0.5)); // Min zoom 0.5x
+    setImageZoom(prevZoom => Math.max(prevZoom - 0.1, 0.5));
   }, []);
 
 
@@ -117,7 +116,7 @@ export default function Home() {
 
     setDisplayedFlashcards(cardsToDisplay);
     setCurrentIndex(0);
-    setImageZoom(1); // Reset zoom on card change
+    setImageZoom(1);
     setIsLoading(false);
   }, [activeCategory, activeSet, allFlashcards, availableSets, activeDisplayMode]);
 
@@ -184,9 +183,9 @@ export default function Home() {
   const headerDynamicHeight = useMemo(() => {
     if (!showTabs) return 0;
     let height = 0;
-    if (uniqueCategories.length > 0) height += 2.8; // Approx height for CategoryTabs
-    if (availableSets.length > 0 && activeSet) height += 2.8; // Approx height for SetTabs
-    if (activeCategory && ((availableSets.length > 0 && activeSet) || availableSets.length === 0)) height += 2.8; // Approx height for DisplayModeTabs
+    if (uniqueCategories.length > 0) height += 2.8; 
+    if (availableSets.length > 0 && activeSet) height += 2.8; 
+    if (activeCategory && ((availableSets.length > 0 && activeSet) || availableSets.length === 0)) height += 2.8; 
     return height;
   }, [showTabs, uniqueCategories, availableSets, activeSet, activeCategory]);
 
@@ -198,7 +197,7 @@ export default function Home() {
     paddingTop: `calc(${controlButtonRowHeight} + ${headerApproxHeight} + 1rem)`, 
     paddingBottom: `calc(${footerApproxHeight} + 1rem)`,
     height: `calc(100vh - ${controlButtonRowHeight} - ${headerApproxHeight} - ${footerApproxHeight})`,
-    minHeight: '300px', // Minimum height for the content area
+    minHeight: '300px', 
   }), [headerApproxHeight, footerApproxHeight, controlButtonRowHeight]);
 
 
@@ -366,7 +365,7 @@ export default function Home() {
               zoomLevel={imageZoom} 
             />
             {activeDisplayMode === 'image' && displayedFlashcards[currentIndex].imageUrl && (
-              <div className="absolute bottom-4 right-4 z-30 flex flex-col space-y-2 md:bottom-8 md:right-8">
+              <div className="absolute bottom-10 right-4 z-30 flex flex-col space-y-2 md:bottom-12 md:right-8">
                 <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
               </div>
             )}
@@ -386,3 +385,4 @@ export default function Home() {
     </main>
   );
 }
+
