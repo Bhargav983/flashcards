@@ -9,6 +9,7 @@ import { NavigationControls } from '@/components/navigation-controls';
 import { CategoryTabs } from '@/components/category-tabs';
 import { SetTabs } from '@/components/set-tabs';
 import { DisplayModeTabs } from '@/components/display-mode-tabs';
+import { ZoomControls } from '@/components/zoom-controls'; // Import ZoomControls
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, PanelTopOpen, PanelTopClose } from 'lucide-react';
@@ -31,6 +32,7 @@ export default function Home() {
   const [activeDisplayMode, setActiveDisplayMode] = useState<'image' | 'text'>('image');
   
   const [showTabs, setShowTabs] = useState(true);
+  const [imageZoom, setImageZoom] = useState(1); // State for image zoom level
 
   const uniqueCategories = useMemo(() => {
     const categories = new Set(allFlashcards.map(fc => fc.category.toLowerCase()));
@@ -43,6 +45,16 @@ export default function Home() {
   const toggleTabsVisibility = useCallback(() => {
     setShowTabs(prevShowTabs => !prevShowTabs);
   }, []);
+
+  // Zoom handlers
+  const handleZoomIn = useCallback(() => {
+    setImageZoom(prevZoom => Math.min(prevZoom + 0.1, 3)); // Max zoom 3x
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setImageZoom(prevZoom => Math.max(prevZoom - 0.1, 0.5)); // Min zoom 0.5x
+  }, []);
+
 
   useEffect(() => {
     setIsLoading(true);
@@ -105,6 +117,7 @@ export default function Home() {
 
     setDisplayedFlashcards(cardsToDisplay);
     setCurrentIndex(0);
+    setImageZoom(1); // Reset zoom on card change
     setIsLoading(false);
   }, [activeCategory, activeSet, allFlashcards, availableSets, activeDisplayMode]);
 
@@ -151,6 +164,8 @@ export default function Home() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') goToNext();
       if (e.key === 'ArrowLeft') goToPrevious();
+      if (e.key === '+' || e.key === '=') handleZoomIn();
+      if (e.key === '-' || e.key === '_') handleZoomOut();
     };
 
     window.addEventListener('touchstart', handleTouchStart);
@@ -162,28 +177,34 @@ export default function Home() {
       window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [goToNext, goToPrevious]);
-
-  const headerApproxHeight = useMemo(() => {
-    if (!showTabs) return "0rem"; 
-    let height = 2.5; 
-    if (availableSets.length > 0 && activeSet) height += 2.5; 
-    if (activeCategory && ((availableSets.length > 0 && activeSet) || availableSets.length === 0)) height += 2.5; 
-    return `${height}rem`;
-  }, [showTabs, availableSets, activeSet, activeCategory]);
+  }, [goToNext, goToPrevious, handleZoomIn, handleZoomOut]);
   
   const controlButtonRowHeight = "3rem"; 
+  
+  const headerDynamicHeight = useMemo(() => {
+    if (!showTabs) return 0;
+    let height = 0;
+    if (uniqueCategories.length > 0) height += 2.8; // Approx height for CategoryTabs
+    if (availableSets.length > 0 && activeSet) height += 2.8; // Approx height for SetTabs
+    if (activeCategory && ((availableSets.length > 0 && activeSet) || availableSets.length === 0)) height += 2.8; // Approx height for DisplayModeTabs
+    return height;
+  }, [showTabs, uniqueCategories, availableSets, activeSet, activeCategory]);
+
+  const headerApproxHeight = `${headerDynamicHeight}rem`;
   const footerApproxHeight = displayedFlashcards.length > 1 ? "6rem" : "0rem";
+
 
   const commonWrapperStyle = useMemo(() => ({
     paddingTop: `calc(${controlButtonRowHeight} + ${headerApproxHeight} + 1rem)`, 
     paddingBottom: `calc(${footerApproxHeight} + 1rem)`,
+    height: `calc(100vh - ${controlButtonRowHeight} - ${headerApproxHeight} - ${footerApproxHeight})`,
+    minHeight: '300px', // Minimum height for the content area
   }), [headerApproxHeight, footerApproxHeight, controlButtonRowHeight]);
 
 
   if (isLoading && displayedFlashcards.length === 0) { 
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4" style={commonWrapperStyle}>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
         <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
            <div className="flex items-center w-full px-2 sm:px-4 py-2" style={{height: controlButtonRowHeight}}>
             <div className="flex-grow">
@@ -230,7 +251,7 @@ export default function Home() {
 
   if (displayedFlashcards.length === 0 && !isLoading) {
      return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4" style={commonWrapperStyle}>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
         <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
           <div className="flex items-center w-full px-2 sm:px-4 py-2" style={{height: controlButtonRowHeight}}>
             <div className="flex-grow">
@@ -334,12 +355,22 @@ export default function Home() {
       </div>
       
       <div 
-        className="w-full max-w-7xl mx-auto flex-grow flex flex-col items-center justify-center relative px-4" // This container uses flex-grow
-        style={commonWrapperStyle} // This style applies padding
+        className="w-full max-w-7xl mx-auto flex-grow flex flex-col items-center justify-center relative px-4"
+        style={commonWrapperStyle}
       >
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
         {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
-          <FlashcardImage flashcard={displayedFlashcards[currentIndex]} />
+          <>
+            <FlashcardImage 
+              flashcard={displayedFlashcards[currentIndex]} 
+              zoomLevel={imageZoom} 
+            />
+            {activeDisplayMode === 'image' && displayedFlashcards[currentIndex].imageUrl && (
+              <div className="absolute bottom-4 right-4 z-30 flex flex-col space-y-2 md:bottom-8 md:right-8">
+                <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
+              </div>
+            )}
+          </>
         )}
       </div>
       {displayedFlashcards.length > 1 && (
@@ -355,4 +386,3 @@ export default function Home() {
     </main>
   );
 }
-
