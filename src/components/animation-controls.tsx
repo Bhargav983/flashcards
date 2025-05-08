@@ -23,7 +23,7 @@ export const AnimationControls: FC<AnimationControlsProps> = ({ onAnimate }) => 
       {animationTypes.map((anim) => (
         <Button
           key={anim.type}
-          onClick={() => onAnimate(`animate-${anim.type}`)}
+          onClick={() => onAnimate(anim.type)} // Pass anim.type directly
           variant="outline"
           size="sm" 
           className="p-2 shadow-sm bg-background/80 hover:bg-background w-full text-xs"

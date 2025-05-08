@@ -1,36 +1,32 @@
 
 import Image from 'next/image';
 import type { Flashcard } from '@/lib/flashcard-data';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface FlashcardImageProps {
   flashcard: Flashcard;
   zoomLevel?: number;
   imageRotation?: number; 
-  animationClass?: string;
+  animationType?: string; // e.g., "jump-image", "spin-image-once"
 }
 
-export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, animationClass = '' }: FlashcardImageProps) {
+export function FlashcardImage({ 
+  flashcard, 
+  zoomLevel = 1, 
+  imageRotation = 0, 
+  animationType = '' 
+}: FlashcardImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [errorOccurred, setErrorOccurred] = useState(false);
   const { imageUrl, altText, aiHint, displayText, id, type } = flashcard;
-  const imageContainerRef = useRef<HTMLDivElement>(null);
-  const [currentAnimation, setCurrentAnimation] = useState(animationClass);
+  const [internalAnimationKey, setInternalAnimationKey] = useState(0);
 
   useEffect(() => {
     if (type === 'image' && imageUrl) { 
       setIsLoading(true);
       setErrorOccurred(false);
-      
-      try {
-        if (!imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
-            // console.warn(`Potentially malformed image URL: ${imageUrl}. Should be relative from public or absolute.`);
-        }
-      } catch (e) {
-        // console.error(`Error constructing URL for image: ${imageUrl}`, e);
-      }
-
     } else {
       setIsLoading(false); 
       setErrorOccurred(false);
@@ -38,25 +34,10 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, an
   }, [id, imageUrl, type]); 
 
   useEffect(() => {
-    // This effect handles re-triggering animations.
-    // When animationClass prop changes, we want to ensure the animation plays.
-    if (imageContainerRef.current && animationClass) {
-      // Remove the old animation class
-      setCurrentAnimation('');
-      // Force a reflow - this is a trick to make the browser re-evaluate styles
-      // and restart the animation when the class is re-added.
-      // void imageContainerRef.current.offsetWidth; 
-      
-      // Add the new animation class after a tiny delay
-      const timer = setTimeout(() => {
-        setCurrentAnimation(animationClass);
-      }, 10); // Small delay can help ensure the class removal is processed
-      
-      return () => clearTimeout(timer);
-    } else if (!animationClass) {
-        setCurrentAnimation(''); // Clear animation if prop is empty
+    if (animationType) {
+      setInternalAnimationKey(prev => prev + 1);
     }
-  }, [animationClass, id]); // Re-run if animationClass or card ID changes
+  }, [animationType, id]);
 
 
   const handleImageLoad = () => {
@@ -70,6 +51,57 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, an
     // console.error(`Error loading image. Path: ${imageUrl}`);
   };
 
+  const getAnimationTarget = () => {
+    const baseTarget = {
+      scale: zoomLevel,
+      rotate: imageRotation,
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.3, ease: "easeOut" } // Smooth transition for prop changes
+    };
+
+    switch (animationType) {
+      case 'jump-image':
+        return {
+          y: [0, -30, 0], 
+          scale: [zoomLevel, zoomLevel * 1.1, zoomLevel],
+          rotate: imageRotation, 
+          opacity: 1,
+          transition: { duration: 0.5, ease: "easeInOut", times: [0, 0.5, 1] },
+        };
+      case 'spin-image-once':
+        return {
+          ...baseTarget,
+          rotate: imageRotation + 360,
+          transition: { duration: 0.7, ease: "easeInOut" },
+        };
+      case 'pop-image':
+        return {
+          scale: [zoomLevel, zoomLevel * 1.2, zoomLevel],
+          rotate: imageRotation,
+          y:0,
+          opacity: 1,
+          transition: { duration: 0.4, ease: "easeInOut" },
+        };
+      case 'float-image':
+        return {
+          ...baseTarget,
+          y: -50, 
+          opacity: 0.3,
+          transition: { duration: 1.5, ease: "easeInOut" },
+        };
+      case 'color-shift-image': // Handled by CSS for now
+        return baseTarget;
+      default:
+        return baseTarget; 
+    }
+  };
+
+  const animationProps = getAnimationTarget();
+  
+  const imageDynamicClassName = animationType === 'color-shift-image' ? 'animate-color-shift-image' : '';
+
+
   if (type === 'text') {
     return (
       <div className="flex flex-col items-center justify-center w-full animate-fadeIn h-full p-4">
@@ -82,20 +114,17 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, an
     );
   }
 
-  // type === 'image'
   return (
     <div 
       id={`flashcard-image-container-${id}`} 
-      ref={imageContainerRef}
       className="flex flex-col items-center justify-center w-full h-full animate-fadeIn overflow-hidden group"
     >
-      <div 
-        className={`relative w-full h-full flex items-center justify-center transition-transform duration-300 ease-out group-hover:scale-[1.02] ${currentAnimation}`}
-        style={{
-          '--zoom-level': zoomLevel,
-          '--image-rotation': `${imageRotation}deg`,
-           transform: `scale(var(--zoom-level)) rotate(var(--image-rotation))`,
-        } as React.CSSProperties}
+      <motion.div 
+        key={`${id}-${internalAnimationKey}`}
+        className="relative w-full h-full flex items-center justify-center"
+        initial={{ scale: zoomLevel, rotate: imageRotation, y: 0, opacity: 1 }}
+        animate={animationProps}
+        whileHover={!animationType ? { scale: zoomLevel * 1.02 } : {}} // Apply hover zoom only if no active animation
       >
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
@@ -111,7 +140,7 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, an
         )}
         {imageUrl && altText && (
           <Image
-            key={id} 
+            key={`${id}-img`}
             src={imageUrl}
             alt={altText}
             fill
@@ -124,6 +153,7 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, an
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
             onLoad={handleImageLoad} 
             onError={handleImageError}
+            className={imageDynamicClassName}
           />
         )}
         {!imageUrl && !isLoading && !errorOccurred && type === 'image' && (
@@ -131,8 +161,7 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, an
                 <p className="text-muted-foreground text-lg">Image not available for this card.</p>
             </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
-

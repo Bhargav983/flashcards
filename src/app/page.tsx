@@ -66,18 +66,16 @@ export default function Home() {
   }, []);
 
   const handleAnimate = useCallback((animationType: string) => {
+    // animationType will be like "jump-image", "spin-image-once"
     if (activeAnimation === animationType) {
-      // If the same animation is clicked, clear it first then re-apply in a timeout
-      // This helps ensure the animation re-triggers
       setActiveAnimation('');
       setTimeout(() => {
         setActiveAnimation(animationType);
-      }, 50); // A small delay often helps the browser process the class change
+      }, 50); 
     } else {
-      // If it's a new animation, just set it
       setActiveAnimation(animationType);
     }
-  }, [activeAnimation]); // Depend on activeAnimation to correctly compare
+  }, [activeAnimation]); 
 
 
   useEffect(() => {
@@ -395,7 +393,7 @@ export default function Home() {
               flashcard={displayedFlashcards[currentIndex]} 
               zoomLevel={imageZoom}
               imageRotation={imageRotation}
-              animationClass={activeAnimation}
+              animationType={activeAnimation}
             />
              {activeDisplayMode === 'image' && displayedFlashcards[currentIndex].imageUrl && (
               <div className="absolute bottom-[calc(var(--dynamic-footer-height,6rem)+3rem)] right-4 z-30 flex flex-col space-y-2 md:bottom-[calc(var(--dynamic-footer-height,6rem)+4rem)] md:right-8">
