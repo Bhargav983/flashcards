@@ -165,8 +165,7 @@ export default function Home() {
   }, [goToNext, goToPrevious]);
 
 
-  const mainContentMarginTopClass = showTabs ? "mt-24 sm:mt-32 md:mt-40" : "mt-[calc(2.5rem+1rem)]"; // Button height (h-10 ~ 2.5rem) + py-2 (0.5rem * 2 = 1rem)
-
+  const mainContentMarginTopClass = showTabs ? "mt-24 sm:mt-32 md:mt-40" : "mt-8"; // Adjusted for hidden tabs
 
   if (isLoading && displayedFlashcards.length === 0) { 
     return (
@@ -247,7 +246,7 @@ export default function Home() {
                 <br />
                 {activeDisplayMode === 'image' && (
                     <>
-                    Please check paths like: <code>{imagePathHint}</code>.
+                    Please check paths like: <code>{imagePathHint}</code>. Ensure images are in the public folder.
                     </>
                 )}
                 {activeDisplayMode === 'text' && "Ensure flashcard data includes text entries for this selection."}
@@ -300,7 +299,7 @@ export default function Home() {
         )}
       </div>
       
-      <div className={`w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mb-[80px] sm:mb-[100px] ${mainContentMarginTopClass}`}>
+      <div className={`w-full max-w-5xl flex-grow flex flex-col items-center justify-center relative px-4 mb-[80px] sm:mb-[100px] ${mainContentMarginTopClass}`}>
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
         {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
           <FlashcardImage flashcard={displayedFlashcards[currentIndex]} />
