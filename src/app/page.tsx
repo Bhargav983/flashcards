@@ -10,7 +10,7 @@ import { CategoryTabs } from '@/components/category-tabs';
 import { SetTabs } from '@/components/set-tabs';
 import { DisplayModeTabs } from '@/components/display-mode-tabs';
 import { ZoomControls } from '@/components/zoom-controls';
-import { AnimationControls } from '@/components/animation-controls'; // Added AnimationControls
+import { AnimationControls } from '@/components/animation-controls';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, PanelTopOpen, PanelTopClose } from 'lucide-react';
@@ -51,27 +51,33 @@ export default function Home() {
   }, []);
 
   const handleZoomIn = useCallback(() => {
-    setActiveAnimation(''); // Clear animation on zoom
+    setActiveAnimation(''); 
     setImageZoom(prevZoom => Math.min(prevZoom + 0.1, 3));
   }, []);
 
   const handleZoomOut = useCallback(() => {
-    setActiveAnimation(''); // Clear animation on zoom
+    setActiveAnimation(''); 
     setImageZoom(prevZoom => Math.max(prevZoom - 0.1, 0.5));
   }, []);
 
   const handleRotateImage = useCallback(() => {
-    setActiveAnimation(''); // Clear animation on rotate
+    setActiveAnimation(''); 
     setImageRotation(prevRotation => (prevRotation + 90) % 360);
   }, []);
 
   const handleAnimate = useCallback((animationType: string) => {
-    setActiveAnimation('');
-    // Timeout to allow the class to be removed and re-added, ensuring animation re-triggers
-    setTimeout(() => {
+    if (activeAnimation === animationType) {
+      // If the same animation is clicked, clear it first then re-apply in a timeout
+      // This helps ensure the animation re-triggers
+      setActiveAnimation('');
+      setTimeout(() => {
+        setActiveAnimation(animationType);
+      }, 50); // A small delay often helps the browser process the class change
+    } else {
+      // If it's a new animation, just set it
       setActiveAnimation(animationType);
-    }, 50);
-  }, []);
+    }
+  }, [activeAnimation]); // Depend on activeAnimation to correctly compare
 
 
   useEffect(() => {
@@ -137,7 +143,7 @@ export default function Home() {
     setCurrentIndex(0);
     setImageZoom(1);
     setImageRotation(0); 
-    setActiveAnimation(''); // Reset animation on card change
+    setActiveAnimation(''); 
     setIsLoading(false);
   }, [activeCategory, activeSet, allFlashcards, availableSets, activeDisplayMode]);
 
@@ -220,7 +226,6 @@ export default function Home() {
   const commonWrapperStyle = useMemo(() => ({
     paddingTop: `calc(${controlButtonRowHeight} + ${headerApproxHeight} + 1rem)`, 
     paddingBottom: `calc(${footerApproxHeight} + 1rem)`,
-    minHeight: '300px', 
   }), [headerApproxHeight, footerApproxHeight, controlButtonRowHeight]);
 
 
@@ -381,7 +386,7 @@ export default function Home() {
       
       <div 
         className="w-full mx-auto flex-grow flex flex-col items-center justify-center relative px-4"
-        style={{...commonWrapperStyle, height: 'calc(100vh - var(--dynamic-header-height, 6rem) - var(--dynamic-footer-height, 6rem))'}}
+        style={{...commonWrapperStyle, height: `calc(100vh - (${controlButtonRowHeight} + ${headerApproxHeight}) - ${footerApproxHeight})`}}
       >
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
         {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
@@ -393,7 +398,7 @@ export default function Home() {
               animationClass={activeAnimation}
             />
              {activeDisplayMode === 'image' && displayedFlashcards[currentIndex].imageUrl && (
-              <div className="absolute bottom-28 right-4 z-30 flex flex-col space-y-2 md:bottom-32 md:right-8">
+              <div className="absolute bottom-[calc(var(--dynamic-footer-height,6rem)+3rem)] right-4 z-30 flex flex-col space-y-2 md:bottom-[calc(var(--dynamic-footer-height,6rem)+4rem)] md:right-8">
                 <ZoomControls 
                   onZoomIn={handleZoomIn} 
                   onZoomOut={handleZoomOut}
@@ -417,10 +422,11 @@ export default function Home() {
       )}
       <style jsx global>{`
         body {
-          --dynamic-header-height: ${controlButtonRowHeight} + ${headerApproxHeight};
+          --dynamic-header-height: calc(${controlButtonRowHeight} + ${headerApproxHeight});
           --dynamic-footer-height: ${footerApproxHeight};
         }
       `}</style>
     </main>
   );
 }
+

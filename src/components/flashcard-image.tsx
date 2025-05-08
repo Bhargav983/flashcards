@@ -1,7 +1,7 @@
 
 import Image from 'next/image';
 import type { Flashcard } from '@/lib/flashcard-data';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Loader2 } from 'lucide-react';
 
 interface FlashcardImageProps {
@@ -15,6 +15,8 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, an
   const [isLoading, setIsLoading] = useState(true);
   const [errorOccurred, setErrorOccurred] = useState(false);
   const { imageUrl, altText, aiHint, displayText, id, type } = flashcard;
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const [currentAnimation, setCurrentAnimation] = useState(animationClass);
 
   useEffect(() => {
     if (type === 'image' && imageUrl) { 
@@ -34,6 +36,28 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, an
       setErrorOccurred(false);
     }
   }, [id, imageUrl, type]); 
+
+  useEffect(() => {
+    // This effect handles re-triggering animations.
+    // When animationClass prop changes, we want to ensure the animation plays.
+    if (imageContainerRef.current && animationClass) {
+      // Remove the old animation class
+      setCurrentAnimation('');
+      // Force a reflow - this is a trick to make the browser re-evaluate styles
+      // and restart the animation when the class is re-added.
+      // void imageContainerRef.current.offsetWidth; 
+      
+      // Add the new animation class after a tiny delay
+      const timer = setTimeout(() => {
+        setCurrentAnimation(animationClass);
+      }, 10); // Small delay can help ensure the class removal is processed
+      
+      return () => clearTimeout(timer);
+    } else if (!animationClass) {
+        setCurrentAnimation(''); // Clear animation if prop is empty
+    }
+  }, [animationClass, id]); // Re-run if animationClass or card ID changes
+
 
   const handleImageLoad = () => {
     setIsLoading(false);
@@ -62,10 +86,11 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, an
   return (
     <div 
       id={`flashcard-image-container-${id}`} 
+      ref={imageContainerRef}
       className="flex flex-col items-center justify-center w-full h-full animate-fadeIn overflow-hidden group"
     >
       <div 
-        className={`relative w-full h-full flex items-center justify-center transition-transform duration-300 ease-out group-hover:scale-[1.02] ${animationClass}`}
+        className={`relative w-full h-full flex items-center justify-center transition-transform duration-300 ease-out group-hover:scale-[1.02] ${currentAnimation}`}
         style={{
           '--zoom-level': zoomLevel,
           '--image-rotation': `${imageRotation}deg`,
@@ -110,3 +135,4 @@ export function FlashcardImage({ flashcard, zoomLevel = 1, imageRotation = 0, an
     </div>
   );
 }
+
