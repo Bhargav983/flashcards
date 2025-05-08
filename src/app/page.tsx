@@ -365,7 +365,7 @@ export default function Home() {
               zoomLevel={imageZoom} 
             />
             {activeDisplayMode === 'image' && displayedFlashcards[currentIndex].imageUrl && (
-              <div className="absolute bottom-10 right-4 z-30 flex flex-col space-y-2 md:bottom-12 md:right-8">
+              <div className="absolute bottom-24 right-4 z-30 flex flex-col space-y-2 md:bottom-24 md:right-8">
                 <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
               </div>
             )}
