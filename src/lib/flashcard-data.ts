@@ -16,7 +16,7 @@ const baseFlashcards: Omit<Flashcard, 'type' | 'id'> & { baseId: string; display
   {
     baseId: 'fruit-set1-apple',
     altText: 'A flashcard image of a red apple.',
-    imageUrl: '/fruit/set1/0.png', // Corrected path
+    imageUrl: '/fruit/set1/0.jpg', // Corrected path
     aiHint: 'apple',
     category: 'fruit',
     set: 'set1',
@@ -429,3 +429,4 @@ export const flashcards: Flashcard[] = baseFlashcards.reduce((acc: Flashcard[], 
   }
   return acc;
 }, []);
+
