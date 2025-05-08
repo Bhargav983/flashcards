@@ -10,8 +10,8 @@ import { CategoryTabs } from '@/components/category-tabs';
 import { SetTabs } from '@/components/set-tabs';
 import { DisplayModeTabs } from '@/components/display-mode-tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Loader2, PanelTopClose, PanelTopOpen } from 'lucide-react';
+// import { Button } from '@/components/ui/button'; // No longer needed
+import { Loader2 } from 'lucide-react'; // PanelTopClose, PanelTopOpen no longer needed
 
 export default function Home() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function Home() {
   const [activeSet, setActiveSet] = useState<string | null>(null);
   const [activeDisplayMode, setActiveDisplayMode] = useState<'image' | 'text'>('image');
   
-  const [showTabs, setShowTabs] = useState(true);
+  // const [showTabs, setShowTabs] = useState(true); // No longer needed as tabs are always shown
 
   const uniqueCategories = useMemo(() => {
     const categories = new Set(allFlashcards.map(fc => fc.category.toLowerCase()));
@@ -160,9 +160,9 @@ export default function Home() {
     };
   }, [goToNext, goToPrevious]);
 
-  const toggleTabsVisibility = useCallback(() => {
-    setShowTabs(prevShowTabs => !prevShowTabs);
-  }, []);
+  // const toggleTabsVisibility = useCallback(() => { // No longer needed
+  //   setShowTabs(prevShowTabs => !prevShowTabs);
+  // }, []);
 
   if (isLoading && displayedFlashcards.length === 0) { 
     return (
@@ -190,28 +190,24 @@ export default function Home() {
 
   if (displayedFlashcards.length === 0 && !isLoading) {
      return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 pt-[11rem] md:pt-[12rem]">
-        <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-30 bg-background/80 backdrop-blur-sm">
-          <Button onClick={toggleTabsVisibility} variant="outline" size="icon" aria-label={showTabs ? "Hide Controls" : "Show Controls"} className="shadow-md">
-            {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
-          </Button>
-        </div>
-        <div className="fixed top-12 md:top-16 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
-            {showTabs && uniqueCategories.length > 0 && (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
+        {/* Button to toggle tabs visibility removed */}
+        <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
+            {uniqueCategories.length > 0 && (
             <CategoryTabs
                 categories={uniqueCategories}
                 activeCategory={activeCategory}
                 onCategoryChange={handleCategoryChange}
             />
             )}
-            {showTabs && availableSets.length > 0 && activeSet && (
+            {availableSets.length > 0 && activeSet && (
             <SetTabs
                 sets={availableSets}
                 activeSet={activeSet}
                 onSetChange={handleSetChange}
             />
             )}
-            {showTabs && activeCategory && 
+            {activeCategory && 
             ( (availableSets.length > 0 && activeSet) || availableSets.length === 0 ) && (
                 <DisplayModeTabs
                 activeDisplayMode={activeDisplayMode}
@@ -219,7 +215,7 @@ export default function Home() {
                 />
             )}
         </div>
-        <Card className="w-full max-w-md shadow-xl">
+        <Card className="w-full max-w-md shadow-xl mt-24 sm:mt-32 md:mt-40"> {/* Added margin top to avoid overlap with fixed tabs */}
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-foreground">
               No Flashcards Available
@@ -244,28 +240,24 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden pt-[11rem] md:pt-[12rem] relative">
-      <div className="w-full flex justify-end py-2 px-4 fixed top-0 right-0 z-30 bg-background/80 backdrop-blur-sm">
-          <Button onClick={toggleTabsVisibility} variant="outline" size="icon" aria-label={showTabs ? "Hide Controls" : "Show Controls"} className="shadow-md">
-            {showTabs ? <PanelTopClose className="h-5 w-5" /> : <PanelTopOpen className="h-5 w-5" />}
-          </Button>
-      </div>
-      <div className="fixed top-12 md:top-16 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
-        {showTabs && uniqueCategories.length > 0 && (
+    <main className="flex flex-col items-center justify-between min-h-screen bg-background overflow-hidden relative">
+      {/* Button to toggle tabs visibility removed */}
+      <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
+        {uniqueCategories.length > 0 && (
           <CategoryTabs
             categories={uniqueCategories}
             activeCategory={activeCategory}
             onCategoryChange={handleCategoryChange}
           />
         )}
-        {showTabs && availableSets.length > 0 && activeSet && (
+        {availableSets.length > 0 && activeSet && (
           <SetTabs
             sets={availableSets}
             activeSet={activeSet}
             onSetChange={handleSetChange}
           />
         )}
-        {showTabs && activeCategory && 
+        {activeCategory && 
           ( (availableSets.length > 0 && activeSet) || availableSets.length === 0 ) && (
           <DisplayModeTabs
             activeDisplayMode={activeDisplayMode}
@@ -274,7 +266,7 @@ export default function Home() {
         )}
       </div>
       
-      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mb-[80px] sm:mb-[100px]">
+      <div className="w-full max-w-3xl flex-grow flex flex-col items-center justify-center relative px-4 mb-[80px] sm:mb-[100px] mt-24 sm:mt-32 md:mt-40"> {/* Added margin top to avoid overlap */}
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
         {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
           <FlashcardImage flashcard={displayedFlashcards[currentIndex]} />
