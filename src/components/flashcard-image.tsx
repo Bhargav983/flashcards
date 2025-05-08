@@ -19,9 +19,9 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
       setErrorOccurred(false);
       
       if (typeof imageUrl === 'string' && imageUrl.trim() !== '') {
-        // No need to use window.Image preloader if next/image handles onLoad/onError
+        // Preloading logic was removed as next/image handles it.
       } else {
-        handleImageError();
+        handleImageError(); // Should ideally not happen if imageUrl is validated before
       }
 
     } else {
@@ -39,7 +39,6 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
   const handleImageError = () => {
     setIsLoading(false);
     setErrorOccurred(true);
-    // console.error(`Error loading image: ${imageUrl}`); // Removed console error as per user request earlier
   };
 
   if (type === 'text') {
@@ -79,7 +78,7 @@ export function FlashcardImage({ flashcard }: FlashcardImageProps) {
             style={{ objectFit: 'contain', visibility: isLoading || errorOccurred ? 'hidden' : 'visible' }}
             priority 
             data-ai-hint={aiHint}
-            sizes="100vw" 
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw" 
             onLoad={handleImageLoad} 
             onError={handleImageError}
           />

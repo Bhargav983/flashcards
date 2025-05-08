@@ -165,18 +165,18 @@ export default function Home() {
   }, [goToNext, goToPrevious]);
 
   const headerApproxHeight = useMemo(() => {
-    if (!showTabs) return "0rem"; // No tabs, no header space needed other than button
-    let height = 2.5; // Base for category tabs (approx h-10)
-    if (availableSets.length > 0 && activeSet) height += 2.5; // Approx for set tabs
-    if (activeCategory && ((availableSets.length > 0 && activeSet) || availableSets.length === 0)) height += 2.5; // Approx for display mode tabs
+    if (!showTabs) return "0rem"; 
+    let height = 2.5; 
+    if (availableSets.length > 0 && activeSet) height += 2.5; 
+    if (activeCategory && ((availableSets.length > 0 && activeSet) || availableSets.length === 0)) height += 2.5; 
     return `${height}rem`;
   }, [showTabs, availableSets, activeSet, activeCategory]);
   
-  const controlButtonRowHeight = "3rem"; // Approx height for the row containing the toggle button
+  const controlButtonRowHeight = "3rem"; 
   const footerApproxHeight = displayedFlashcards.length > 1 ? "6rem" : "0rem";
 
   const commonWrapperStyle = useMemo(() => ({
-    paddingTop: `calc(${controlButtonRowHeight} + ${headerApproxHeight} + 1rem)`, // control button row + tabs height + padding
+    paddingTop: `calc(${controlButtonRowHeight} + ${headerApproxHeight} + 1rem)`, 
     paddingBottom: `calc(${footerApproxHeight} + 1rem)`,
   }), [headerApproxHeight, footerApproxHeight, controlButtonRowHeight]);
 
@@ -186,7 +186,15 @@ export default function Home() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4" style={commonWrapperStyle}>
         <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
            <div className="flex items-center w-full px-2 sm:px-4 py-2" style={{height: controlButtonRowHeight}}>
-            <div className="flex-grow"></div> 
+            <div className="flex-grow">
+                 {showTabs && uniqueCategories.length > 0 && (
+                  <CategoryTabs
+                    categories={uniqueCategories}
+                    activeCategory={activeCategory}
+                    onCategoryChange={handleCategoryChange}
+                  />
+                )}
+            </div> 
             <Button
               onClick={toggleTabsVisibility}
               variant="outline"
@@ -286,7 +294,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col min-h-screen bg-background overflow-hidden">
+    <main className="flex flex-col h-screen bg-background overflow-hidden">
       <div className="fixed top-0 left-0 right-0 z-20 bg-background/80 backdrop-blur-sm flex flex-col">
         <div className="flex items-center w-full px-2 sm:px-4 py-2" style={{height: controlButtonRowHeight}}>
            <div className="flex-grow overflow-x-auto">
@@ -326,8 +334,8 @@ export default function Home() {
       </div>
       
       <div 
-        className="w-full max-w-7xl mx-auto flex-grow flex flex-col items-center justify-center relative px-4"
-        style={commonWrapperStyle}
+        className="w-full max-w-7xl mx-auto flex-grow flex flex-col items-center justify-center relative px-4" // This container uses flex-grow
+        style={commonWrapperStyle} // This style applies padding
       >
         {isLoading && <Loader2 className="h-12 w-12 animate-spin text-primary absolute" />}
         {!isLoading && displayedFlashcards.length > 0 && displayedFlashcards[currentIndex] && (
